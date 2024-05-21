@@ -10,6 +10,53 @@ import DGCharts
 
 class TwiiHeaderView: UIView {
     
+    private enum SectionTabs: String {
+        case movers = "台股漲跌排行"
+        case volume = "成交量排行"
+        case value = "成交值排行"
+        
+        var index: Int {
+            switch self {
+            case .movers:
+                return 0
+            case .volume:
+                return 1
+            case .value:
+                return 2
+            }
+        }
+    }
+    
+    private var sectionTab: Int = 0 {
+        didSet {
+            UIView.animate(withDuration: 0.3, delay: , options: .curveEaseInOut) {
+                <#code#>
+            }
+        }
+    }
+    
+    
+    private let tabButtons: [UIButton] = ["台股漲跌排行", "成交量排行", "成交值排行"].map{ titles in
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(titles, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
+        button.tintColor = .label
+        return button
+    }
+    
+    private lazy var sectionStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: tabButtons)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .equalSpacing
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    
+    
+    
     private var lineChart: LineChartView = {
         let chartView = LineChartView()
         chartView.rightAxis.enabled = false
@@ -17,7 +64,7 @@ class TwiiHeaderView: UIView {
                 
         let leftAxis = chartView.leftAxis
         leftAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        leftAxis.setLabelCount(100, force: false)
+        leftAxis.setLabelCount(10, force: false)
         leftAxis.labelPosition = .outsideChart
         
         let xAxis = chartView.xAxis
@@ -29,21 +76,23 @@ class TwiiHeaderView: UIView {
         
         return chartView
     }()
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(lineChart)
-        
+        addSubview(sectionStack)
         lineChart.delegate = self
+        
         setData()
+        configureUI()
+        configureStackButton()
+        
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        lineChart.frame = bounds
+        lineChart.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height / 1.2)
     }
-    
     
     private func setData() {
         
@@ -114,6 +163,40 @@ class TwiiHeaderView: UIView {
             }
         }
     }
+    
+    private func configureStackButton() {
+        for (i, button) in sectionStack.arrangedSubviews.enumerated() {
+            guard let button = button as? UIButton else { return }
+            button.addTarget(self, action: #selector(didTapTab(_:)), for: .touchUpInside)
+        }
+    }
+    
+    @objc private func didTapTab(_ sender: UIButton) {
+        guard let label = sender.titleLabel?.text else { return }
+        switch label {
+        case SectionTabs.movers.rawValue:
+            sectionTab = 0
+        case SectionTabs.volume.rawValue:
+            sectionTab = 1
+        case SectionTabs.value.rawValue:
+            sectionTab = 2
+        default:
+            sectionTab = 0
+        }
+    }
+    
+    
+    private func configureUI() {
+        NSLayoutConstraint.activate([
+            sectionStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            sectionStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            sectionStack.topAnchor.constraint(equalTo: lineChart.bottomAnchor),
+            sectionStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+   
+    
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
