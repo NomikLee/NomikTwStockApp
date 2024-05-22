@@ -29,6 +29,88 @@ class APIService {
         tast.resume()
     }
     
+    func moversUpCall(completion: @escaping ((Result<MoversUPRespose, Error>) -> Void)) {
+        var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.movers.valueEndpoints())
+        
+        let queryItem = [
+            URLQueryItem(name: "direction", value: "up"),
+            URLQueryItem(name: "change", value: "value")
+        ]
+        
+        urlComponents?.queryItems = queryItem
+        
+        guard let url = urlComponents?.url else { return }
+        
+        var request = URLRequest(url: url)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            do {
+                let moversUPData = try JSONDecoder().decode(MoversUPRespose.self, from: data)
+                completion(.success(moversUPData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
+    func moversDownCall(completion: @escaping ((Result<MoversDownRespose, Error>) -> Void)) {
+        
+        var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.movers.valueEndpoints())
+        
+        let queryItem = [
+            URLQueryItem(name: "direction", value: "down"),
+            URLQueryItem(name: "change", value: "value")
+        ]
+        
+        urlComponents?.queryItems = queryItem
+        
+        guard let urlComponents = urlComponents?.url else { return }
+        
+        var request = URLRequest(url: urlComponents)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            do {
+                let moversDownData = try JSONDecoder().decode(MoversDownRespose.self, from: data)
+                completion(.success(moversDownData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
+    func volumesCall(completion: @escaping ((Result<VolumesRespose, Error>) -> Void)) {
+        
+        var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.actives.valueEndpoints())
+        
+        let queryItem = [
+            URLQueryItem(name: "trade", value: "value")
+        ]
+        
+        urlComponents?.queryItems = queryItem
+        
+        guard let urlComponents = urlComponents?.url else { return }
+        
+        var request = URLRequest(url: urlComponents)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            do {
+                let volumesData = try JSONDecoder().decode(VolumesRespose.self, from: data)
+                completion(.success(volumesData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
     func quotesCall(completion: @escaping ((Result<MarketDataResponse, Error>) -> Void)) {
         let url = URL(string: Constants.baseURL + Http.Endpoints.quotes.valueEndpoints())
         var request = URLRequest(url: url!)

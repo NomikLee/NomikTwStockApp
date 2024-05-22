@@ -8,35 +8,57 @@
 import UIKit
 import DGCharts
 
+protocol TwiiHeaderViewDelegate: AnyObject {
+    func twiiHeaderViewDidTapMoversUP()
+    func twiiHeaderViewDidTapMoversDown()
+    func twiiHeaderViewDidTapVolume()
+}
+
 class TwiiHeaderView: UIView {
     
     private enum SectionTabs: String {
-        case movers = "台股漲跌排行"
-        case volume = "成交量排行"
-        case value = "成交值排行"
-        
-        var index: Int {
-            switch self {
-            case .movers:
-                return 0
-            case .volume:
-                return 1
-            case .value:
-                return 2
-            }
-        }
+        case moversUP = "台股上漲排行"
+        case moversDown = "台股下跌排行"
+        case volume = "成交值排行"
     }
+    
+    weak var delegate: TwiiHeaderViewDelegate?
+    
+    private var leadingAnchors: [NSLayoutConstraint] = []
+    private var trailingAnchors: [NSLayoutConstraint] = []
+    
+    private let viewBar: UIView = {
+        let viewBar = UIView()
+        viewBar.translatesAutoresizingMaskIntoConstraints = false
+        viewBar.backgroundColor = .systemOrange
+        return viewBar
+    }()
     
     private var sectionTab: Int = 0 {
         didSet {
-            UIView.animate(withDuration: 0.3, delay: , options: .curveEaseInOut) {
-                <#code#>
+            for i in 0..<tabButtons.count {
+                UIView.animate(withDuration: 0.3, delay: 0 , options: .curveEaseInOut) { [weak self] in
+                    self?.sectionStack.arrangedSubviews[i].tintColor = (self?.sectionTab == i ? .label : .secondaryLabel)
+                    self?.leadingAnchors[i].isActive = (self?.sectionTab == i ? true : false)
+                    self?.trailingAnchors[i].isActive = (self?.sectionTab == i ? true : false)
+                    self?.layoutIfNeeded()
+                }
             }
+            
+            switch sectionTab {
+            case 0:
+                delegate?.twiiHeaderViewDidTapMoversUP()
+            case 1:
+                delegate?.twiiHeaderViewDidTapMoversDown()
+            default:
+                delegate?.twiiHeaderViewDidTapVolume()
+            }
+            
+            
         }
     }
     
-    
-    private let tabButtons: [UIButton] = ["台股漲跌排行", "成交量排行", "成交值排行"].map{ titles in
+    private let tabButtons: [UIButton] = ["台股上漲排行", "台股下跌排行", "成交值排行"].map{ titles in
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(titles, for: .normal)
@@ -54,13 +76,10 @@ class TwiiHeaderView: UIView {
         return stackView
     }()
     
-    
-    
-    
     private var lineChart: LineChartView = {
         let chartView = LineChartView()
         chartView.rightAxis.enabled = false
-        chartView.animate(xAxisDuration: 5)
+        chartView.animate(xAxisDuration: 2.5)
                 
         let leftAxis = chartView.leftAxis
         leftAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
@@ -70,17 +89,24 @@ class TwiiHeaderView: UIView {
         let xAxis = chartView.xAxis
         xAxis.labelPosition = .bottomInside
         xAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        xAxis.axisMaximum = 13.5
+        xAxis.axisMaximum = 14
         xAxis.axisMinimum = 9
-        xAxis.granularity = 1
+        xAxis.granularity = 0.59
+        xAxis.labelCount = 8
         
         return chartView
     }()
+    
+    private func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+        return String(format: "%.0f", value)
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(lineChart)
         addSubview(sectionStack)
+        addSubview(viewBar)
+        
         lineChart.delegate = self
         
         setData()
@@ -101,10 +127,10 @@ class TwiiHeaderView: UIView {
         APIService.shared.twiiCall { result in
             switch result {
             case .success(let twiiDataCall):
-                let centerValue: Double = twiiDataCall.data[0].open
-                let yAxisRange: Double = 327
+                let centerValue: Double = twiiDataCall.data.first?.open ?? 0.0
+                let yAxisRange: Double = 1000
                 
-                let limitLine = ChartLimitLine(limit: centerValue, label: "開盤價")
+                let limitLine = ChartLimitLine(limit: centerValue, label: "開盤價\(centerValue)")
                 limitLine.lineWidth = 1
                 limitLine.lineColor = .systemYellow
                 
@@ -133,13 +159,13 @@ class TwiiHeaderView: UIView {
                     set1.mode = .cubicBezier
                     set1.drawCirclesEnabled = false
                     
-                    if twiiDataCall.data.last!.close > twiiDataCall.data[0].open {
+                    if twiiDataCall.data.last?.close ?? 0.0 > twiiDataCall.data.first?.open ?? 0.0 {
                         set1.setColor(.red)
                         set1.lineWidth = 1
                         set1.fill = ColorFill(color: .red)
                         set1.fillAlpha = 0.2
                         set1.drawFilledEnabled = true
-                    } else if twiiDataCall.data.last!.close < twiiDataCall.data[0].open {
+                    } else if twiiDataCall.data.last?.close ?? 0.0 < twiiDataCall.data.first?.open ?? 0.0 {
                         set1.setColor(.green)
                         set1.lineWidth = 1
                         set1.fill = ColorFill(color: .green)
@@ -167,6 +193,13 @@ class TwiiHeaderView: UIView {
     private func configureStackButton() {
         for (i, button) in sectionStack.arrangedSubviews.enumerated() {
             guard let button = button as? UIButton else { return }
+            
+            if i == sectionTab {
+                button.tintColor = .label
+            } else {
+                button.tintColor = .secondaryLabel
+            }
+            
             button.addTarget(self, action: #selector(didTapTab(_:)), for: .touchUpInside)
         }
     }
@@ -174,11 +207,11 @@ class TwiiHeaderView: UIView {
     @objc private func didTapTab(_ sender: UIButton) {
         guard let label = sender.titleLabel?.text else { return }
         switch label {
-        case SectionTabs.movers.rawValue:
+        case SectionTabs.moversUP.rawValue:
             sectionTab = 0
-        case SectionTabs.volume.rawValue:
+        case SectionTabs.moversDown.rawValue:
             sectionTab = 1
-        case SectionTabs.value.rawValue:
+        case SectionTabs.volume.rawValue:
             sectionTab = 2
         default:
             sectionTab = 0
@@ -187,11 +220,27 @@ class TwiiHeaderView: UIView {
     
     
     private func configureUI() {
+        
+        for i in 0..<tabButtons.count {
+            let leadingAnchor = viewBar.leadingAnchor.constraint(equalTo: sectionStack.arrangedSubviews[i].leadingAnchor)
+            let trailingAnchor = viewBar.trailingAnchor.constraint(equalTo: sectionStack.arrangedSubviews[i].trailingAnchor)
+            leadingAnchors.append(leadingAnchor)
+            trailingAnchors.append(trailingAnchor)
+        }
+        
+        
+        
         NSLayoutConstraint.activate([
             sectionStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             sectionStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             sectionStack.topAnchor.constraint(equalTo: lineChart.bottomAnchor),
-            sectionStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            sectionStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            leadingAnchors[0],
+            trailingAnchors[0],
+            viewBar.topAnchor.constraint(equalTo: sectionStack.arrangedSubviews[0].bottomAnchor),
+            viewBar.heightAnchor.constraint(equalToConstant: 4)
+            
         ])
     }
    
@@ -204,8 +253,8 @@ class TwiiHeaderView: UIView {
     
 }
 
-
 extension TwiiHeaderView: ChartViewDelegate {
-    
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        
+    }
 }
-

@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6F1E9ABB2BFC4B560005E004 /* twiiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9ABA2BFC4B560005E004 /* twiiModels.swift */; };
+		6F1E9ABB2BFC4B560005E004 /* TwiiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9ABA2BFC4B560005E004 /* TwiiModels.swift */; };
+		6F1E9ABD2BFDC8970005E004 /* MoversUPModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9ABC2BFDC8970005E004 /* MoversUPModels.swift */; };
+		6F1E9ABF2BFDCAA50005E004 /* MoversDownModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9ABE2BFDCAA50005E004 /* MoversDownModels.swift */; };
+		6F1E9AC12BFDCAE90005E004 /* ValuesModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9AC02BFDCAE90005E004 /* ValuesModels.swift */; };
+		6F1E9AC32BFDD56D0005E004 /* StockDataViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1E9AC22BFDD56D0005E004 /* StockDataViewModels.swift */; };
 		6FC8098A2BFA1B5200DE1658 /* MarketDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */; };
 		6FC8098C2BFAD6C100DE1658 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8098B2BFAD6C100DE1658 /* ListTableViewCell.swift */; };
 		6FC8098E2BFB365100DE1658 /* TwiiHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8098D2BFB365100DE1658 /* TwiiHeaderView.swift */; };
@@ -39,7 +43,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		6F1E9ABA2BFC4B560005E004 /* twiiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = twiiModels.swift; sourceTree = "<group>"; };
+		6F1E9ABA2BFC4B560005E004 /* TwiiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwiiModels.swift; sourceTree = "<group>"; };
+		6F1E9ABC2BFDC8970005E004 /* MoversUPModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoversUPModels.swift; sourceTree = "<group>"; };
+		6F1E9ABE2BFDCAA50005E004 /* MoversDownModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoversDownModels.swift; sourceTree = "<group>"; };
+		6F1E9AC02BFDCAE90005E004 /* ValuesModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValuesModels.swift; sourceTree = "<group>"; };
+		6F1E9AC22BFDD56D0005E004 /* StockDataViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockDataViewModels.swift; sourceTree = "<group>"; };
 		6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDataModels.swift; sourceTree = "<group>"; };
 		6FC8098B2BFAD6C100DE1658 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		6FC8098D2BFB365100DE1658 /* TwiiHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwiiHeaderView.swift; sourceTree = "<group>"; };
@@ -127,7 +135,10 @@
 			isa = PBXGroup;
 			children = (
 				6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */,
-				6F1E9ABA2BFC4B560005E004 /* twiiModels.swift */,
+				6F1E9ABA2BFC4B560005E004 /* TwiiModels.swift */,
+				6F1E9ABC2BFDC8970005E004 /* MoversUPModels.swift */,
+				6F1E9ABE2BFDCAA50005E004 /* MoversDownModels.swift */,
+				6F1E9AC02BFDCAE90005E004 /* ValuesModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -144,6 +155,7 @@
 		6FD3644C2BF9BAB2001CE94E /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6F1E9AC22BFDD56D0005E004 /* StockDataViewModels.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -234,17 +246,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6F1E9ABB2BFC4B560005E004 /* twiiModels.swift in Sources */,
+				6F1E9ABB2BFC4B560005E004 /* TwiiModels.swift in Sources */,
 				6FD364392BF9B8B5001CE94E /* HomeViewController.swift in Sources */,
 				6FD364352BF9B8B5001CE94E /* AppDelegate.swift in Sources */,
 				6FD364582BF9BE11001CE94E /* UnusualViewController.swift in Sources */,
 				6FD3645E2BF9DCAB001CE94E /* APIService.swift in Sources */,
 				6FD3644F2BF9BB01001CE94E /* MainTabbarController.swift in Sources */,
+				6F1E9ABF2BFDCAA50005E004 /* MoversDownModels.swift in Sources */,
 				6FD364562BF9BD97001CE94E /* StrategyViewController.swift in Sources */,
 				6FD364372BF9B8B5001CE94E /* SceneDelegate.swift in Sources */,
+				6F1E9AC32BFDD56D0005E004 /* StockDataViewModels.swift in Sources */,
 				6FC8098E2BFB365100DE1658 /* TwiiHeaderView.swift in Sources */,
+				6F1E9ABD2BFDC8970005E004 /* MoversUPModels.swift in Sources */,
 				6FD364522BF9BBBE001CE94E /* FavoriteViewController.swift in Sources */,
 				6FC8098A2BFA1B5200DE1658 /* MarketDataModels.swift in Sources */,
+				6F1E9AC12BFDCAE90005E004 /* ValuesModels.swift in Sources */,
 				6FC8098C2BFAD6C100DE1658 /* ListTableViewCell.swift in Sources */,
 				6FD3645A2BF9D296001CE94E /* Constants.swift in Sources */,
 			);

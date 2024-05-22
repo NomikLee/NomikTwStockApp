@@ -1,5 +1,5 @@
 //
-//  twiiModels.swift
+//  TwiiModels.swift
 //  NomikTwStockApp
 //
 //  Created by Pinocchio on 2024/5/21.
