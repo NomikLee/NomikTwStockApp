@@ -89,7 +89,7 @@ class APIService {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.actives.valueEndpoints())
         
         let queryItem = [
-            URLQueryItem(name: "trade", value: "value")
+            URLQueryItem(name: "trade", value: "volume")
         ]
         
         urlComponents?.queryItems = queryItem

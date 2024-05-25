@@ -19,10 +19,12 @@ class TwiiHeaderView: UIView {
     private enum SectionTabs: String {
         case moversUP = "台股上漲排行"
         case moversDown = "台股下跌排行"
-        case volume = "成交值排行"
+        case volume = "成交量排行"
     }
     
     weak var delegate: TwiiHeaderViewDelegate?
+    
+    var timer: Timer?
     
     private var leadingAnchors: [NSLayoutConstraint] = []
     private var trailingAnchors: [NSLayoutConstraint] = []
@@ -58,7 +60,7 @@ class TwiiHeaderView: UIView {
         }
     }
     
-    private let tabButtons: [UIButton] = ["台股上漲排行", "台股下跌排行", "成交值排行"].map{ titles in
+    private let tabButtons: [UIButton] = ["台股上漲排行", "台股下跌排行", "成交量排行"].map{ titles in
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(titles, for: .normal)
@@ -85,14 +87,15 @@ class TwiiHeaderView: UIView {
         leftAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
         leftAxis.setLabelCount(10, force: false)
         leftAxis.labelPosition = .outsideChart
+        leftAxis.drawGridLinesEnabled = false
         
         let xAxis = chartView.xAxis
         xAxis.labelPosition = .bottomInside
         xAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        xAxis.axisMaximum = 14
+        xAxis.axisMaximum = 13.5
         xAxis.axisMinimum = 9
-        xAxis.granularity = 0.59
-        xAxis.labelCount = 8
+        xAxis.granularity = 1
+        xAxis.drawGridLinesEnabled = false
         
         return chartView
     }()
@@ -110,6 +113,7 @@ class TwiiHeaderView: UIView {
         lineChart.delegate = self
         
         setData()
+        startTimer()
         configureUI()
         configureStackButton()
         
@@ -118,6 +122,12 @@ class TwiiHeaderView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         lineChart.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height / 1.2)
+    }
+    
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
+            self?.setData()
+        })
     }
     
     private func setData() {
@@ -155,7 +165,7 @@ class TwiiHeaderView: UIView {
                 }
                 
                 DispatchQueue.main.async {
-                    let set1 = LineChartDataSet(entries: entrieData, label: "大盤漲跌")
+                    let set1 = LineChartDataSet(entries: entrieData, label: "大盤加權指數")
                     set1.mode = .cubicBezier
                     set1.drawCirclesEnabled = false
                     

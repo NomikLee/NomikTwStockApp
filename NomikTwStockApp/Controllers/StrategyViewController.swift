@@ -11,7 +11,7 @@ class StrategyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBlue
     }
 
 }

@@ -22,4 +22,5 @@ struct VolumesData: Codable {
     let change: Double
     let changePercent: Double
     let tradeVolume: Double
+    let tradeValue: Double
 }
