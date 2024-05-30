@@ -7,9 +7,14 @@
 
 import UIKit
 
+protocol CollectionPushPunishDelegate: AnyObject {
+    func pushPunishCollectionCell(_ indexPush: Int)
+}
+
 class CollectionPunishTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionPunishTableViewCell"
+    weak var delegate: CollectionPushPunishDelegate?
     
     private let viewModel = StockDataViewModels()
     var punishs: [Punish] = []
@@ -49,9 +54,16 @@ class CollectionPunishTableViewCell: UITableViewCell {
         }
     }
     
+    
+    
 }
 
 extension CollectionPunishTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.pushPunishCollectionCell(indexPath.row)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return punishs.count
         

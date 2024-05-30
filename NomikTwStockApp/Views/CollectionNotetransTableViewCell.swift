@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol CollectionPushNotetransDelegate: AnyObject {
+    func pushNotetransCollectionCell(_ notetran: [Notetrans], indexPush: Int)
+}
+
 class CollectionNotetransTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionNotetransTableViewCell"
+    
+    weak var delegate: CollectionPushNotetransDelegate?
     
     private let viewModel = StockDataViewModels()
     var notetrans: [Notetrans] = []
@@ -52,6 +58,11 @@ class CollectionNotetransTableViewCell: UITableViewCell {
 }
 
 extension CollectionNotetransTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.pushNotetransCollectionCell(notetrans, indexPush: indexPath.row)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return notetrans.count
         

@@ -17,7 +17,6 @@ class UnusualViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(CollectionPunishTableViewCell.self, forCellReuseIdentifier: CollectionPunishTableViewCell.identifier)
         tableView.register(CollectionNotetransTableViewCell.self, forCellReuseIdentifier: CollectionNotetransTableViewCell.identifier)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         return tableView
     }()
 
@@ -38,7 +37,21 @@ class UnusualViewController: UIViewController {
 
 }
 
-extension UnusualViewController: UITableViewDelegate, UITableViewDataSource {
+extension UnusualViewController: UITableViewDelegate, UITableViewDataSource, CollectionPushPunishDelegate, CollectionPushNotetransDelegate {
+    
+    
+    func pushNotetransCollectionCell(_ notetran: [Notetrans], indexPush: Int) {
+        let alert = UIAlertController(title: "\(notetran[indexPush].Code) \(notetran[indexPush].Name)", message: "\(notetran[indexPush].RecentlyMetAttentionSecuritiesCriteria)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "確認", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func pushPunishCollectionCell(_ indexPush: Int) {
+        let vc = UnusualDetailViewController()
+        vc.configureUnusualDetail(with: indexPush)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return setUnusualTitle.count
@@ -55,6 +68,7 @@ extension UnusualViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionNotetransTableViewCell.identifier, for: indexPath) as? CollectionNotetransTableViewCell else {
                 return UITableViewCell()
             }
+            cell.delegate = self
             viewModel.GetNotetrans { [weak self] result in
                 switch result {
                 case .success(let notetrans):
@@ -69,6 +83,7 @@ extension UnusualViewController: UITableViewDelegate, UITableViewDataSource {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionPunishTableViewCell.identifier, for: indexPath) as? CollectionPunishTableViewCell else {
                 return UITableViewCell()
             }
+            cell.delegate = self
             viewModel.GetPunish { [weak self] result in
                 switch result {
                 case .success(let punish):
