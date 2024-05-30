@@ -128,5 +128,47 @@ class APIService {
         tast.resume()
     }
     
+    func punishCall(completion: @escaping ((Result<[Punish], Error>) -> Void)) {
+        let url = URL(string: "https://openapi.twse.com.tw/v1/announcement/punish")
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("Mon, 26 Jul 1997 05:00:00 GMT", forHTTPHeaderField: "If-Modified-Since")
+        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+        request.setValue("no-cache", forHTTPHeaderField: "Pragma")
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let punishData = try JSONDecoder().decode([Punish].self, from: data)
+                completion(.success(punishData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
+    func notetransCall(completion: @escaping ((Result<[Notetrans], Error>) -> Void)) {
+        let url = URL(string: "https://openapi.twse.com.tw/v1/announcement/notetrans")
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("Mon, 26 Jul 1997 05:00:00 GMT", forHTTPHeaderField: "If-Modified-Since")
+        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+        request.setValue("no-cache", forHTTPHeaderField: "Pragma")
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let notetransData = try JSONDecoder().decode([Notetrans].self, from: data)
+                completion(.success(notetransData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
 }
 

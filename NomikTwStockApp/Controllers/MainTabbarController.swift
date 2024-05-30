@@ -20,7 +20,7 @@ class MainTabbarController: UITabBarController {
         homeVC.title = "📈台股100排行"
         favoriteVC.title = "❤️自選股"
         strategyVC.title = "♟️老余交易策略"
-        unusualVC.title = "⚠️注意處置股"
+        unusualVC.title = "注意處置股"
         
         
         let vc1 = UINavigationController(rootViewController: homeVC)
@@ -31,7 +31,7 @@ class MainTabbarController: UITabBarController {
         vc1.navigationBar.prefersLargeTitles = true
         vc2.navigationBar.prefersLargeTitles = true
         vc3.navigationBar.prefersLargeTitles = true
-        vc4.navigationBar.prefersLargeTitles = true
+//        vc4.navigationBar.prefersLargeTitles = true
         
         vc1.tabBarItem.image = UIImage(systemName: "house")
         vc2.tabBarItem.image = UIImage(systemName: "heart")
