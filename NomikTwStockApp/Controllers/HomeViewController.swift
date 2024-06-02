@@ -36,9 +36,16 @@ class HomeViewController: UIViewController {
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapUser))
+        
         reloadViewData()
         startTimer()
         
+    }
+    
+    @objc func didTapUser() {
+        let vc = UserViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func startTimer() {
