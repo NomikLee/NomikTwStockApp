@@ -18,7 +18,7 @@ protocol TwiiHeaderViewDelegate: AnyObject {
 // 定義 TwiiHeaderView 類，繼承自 UIView
 class TwiiHeaderView: UIView {
     
-    // 定義 SectionTabs 枚舉來表示不同的標籤
+    // 定義 SectionCandlTabs 枚舉來表示不同的標籤
     private enum SectionTabs: String {
         case moversUP = "台股上漲排行"
         case moversDown = "台股下跌排行"

@@ -136,11 +136,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
         let DetailVC = DetailViewController()
         
         if tapVolume == true {
-            DetailVC.title = "\(viewModel.volumesData?.data[indexPath.row].name ?? "無資料")"
+            DetailVC.title = "\(viewModel.volumesData?.data[indexPath.row].symbol ?? "無資料")"
         }else if tapMoversDown == true {
-            DetailVC.title = "\(viewModel.moversDOWNData?.data[indexPath.row].name ?? "無資料")"
+            DetailVC.title = "\(viewModel.moversDOWNData?.data[indexPath.row].symbol ?? "無資料")"
         }else {
-            DetailVC.title = "\(viewModel.moversUPData?.data[indexPath.row].name ?? "無資料")"
+            DetailVC.title = "\(viewModel.moversUPData?.data[indexPath.row].symbol ?? "無資料")"
         }
         navigationController?.pushViewController(DetailVC, animated: true)
     }

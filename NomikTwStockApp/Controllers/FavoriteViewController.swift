@@ -11,7 +11,9 @@ class FavoriteViewController: UIViewController {
     
     private let searchVC = UISearchController(searchResultsController: SearchViewController())
     
-    let dataBase = Firestore.firestore()
+    private let dataBase = Firestore.firestore()
+    private lazy var doc = dataBase.document("Favorite/TwStock")
+
     
     private let favoriteCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -33,25 +35,25 @@ class FavoriteViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapUser))
         
         createSearchBar()
-        
-    }
-    
-    
-    private func writeData(stockCode: String, stockName: String) {
-        let doc = dataBase.document("Favorite/TwStock")
-        doc.setData([stockCode : stockName])
     }
     
     private func readData() {
-        let doc = dataBase.document("Favorite/TwStock")
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return }
+            DispatchQueue.main.async {
+                print(data.keys)
+            }
         }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         favoriteCollectionView.frame = view.bounds
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        readData()
     }
     
     @objc func didTapUser() {
@@ -75,6 +77,13 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteCollectionViewCell.identifier, for: indexPath) as? FavoriteCollectionViewCell else { return UICollectionViewCell() }
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let DetailVC = DetailViewController()
+        DetailVC.title = "2330"
+        
+        navigationController?.pushViewController(DetailVC, animated: true)
     }
 }
 

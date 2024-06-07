@@ -16,8 +16,8 @@ class MainTabbarController: UITabBarController {
         let favoriteVC = FavoriteViewController()
         let unusualVC = UnusualViewController()
         
-        homeVC.title = "📈台股100排行"
-        favoriteVC.title = "❤️自選股"
+        homeVC.title = "台股排行"
+        favoriteVC.title = "自選股"
         unusualVC.title = "注意處置股"
         
         
