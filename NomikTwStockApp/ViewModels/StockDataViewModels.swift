@@ -95,5 +95,27 @@ class StockDataViewModels {
             }
         }
     }
+    
+    func GetQuoteSingle(symbolCode: String, completion: @escaping((Result<QuoteSingleModels, Error>) -> Void)) {
+        APIService.shared.quoteSingleCall(symbolCode: symbolCode) { [weak self] result in
+            switch result {
+            case .success(let quoteSingle):
+                completion(.success(quoteSingle))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func GetPeDyPbCall(completion: @escaping((Result<[PeDyPbModels], Error>) -> Void)) {
+        APIService.shared.peDyPbCall { [weak self] result in
+            switch result {
+            case .success(let peDyPbData):
+                completion(.success(peDyPbData))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 

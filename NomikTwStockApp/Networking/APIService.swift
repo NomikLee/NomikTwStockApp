@@ -219,7 +219,50 @@ class APIService {
                 completion(.failure(error))
             }
         }
-        // 開始任務
+        tast.resume()
+    }
+    
+    func peDyPbCall(completion: @escaping ((Result<[PeDyPbModels], Error>) -> Void)) {
+        // 組合 URL
+        let url = URL(string: "https://openapi.twse.com.tw/v1/exchangeReport/BWIBBU_ALL")
+        
+        // 構建 URLRequest 並設置頭部字段
+        var request = URLRequest(url: url!)
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("Mon, 26 Jul 1997 05:00:00 GMT", forHTTPHeaderField: "If-Modified-Since")
+        request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+        request.setValue("no-cache", forHTTPHeaderField: "Pragma")
+        
+        // 發送網路請求
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let peDyPbData = try JSONDecoder().decode([PeDyPbModels].self, from: data)
+                completion(.success(peDyPbData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+
+    func quoteSingleCall(symbolCode: String, completion: @escaping((Result<QuoteSingleModels, Error>) -> Void)) {
+        let url = URL(string: Constants.baseURL + Http.Endpoints.quote(symbolCode).valueEndpoints())
+        
+        var request = URLRequest(url: url!)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let quoteData = try JSONDecoder().decode(QuoteSingleModels.self, from: data)
+                completion(.success(quoteData))
+            }catch {
+                completion(.failure(error))
+            }
+        }
         tast.resume()
     }
 }

@@ -12,6 +12,8 @@ import FirebaseFirestore
 
 class DetailViewController: UIViewController {
     
+    private var viewModel = StockDataViewModels()
+    
     private var padding: CGFloat = 10.0
     
     private let dataBase = Firestore.firestore()
@@ -51,7 +53,7 @@ class DetailViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 25, weight: .semibold)
-        label.text = "2770.5"
+        label.text = "---"
         label.textAlignment = .center
         return label
     }()
@@ -61,7 +63,7 @@ class DetailViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16, weight: .semibold)
-        label.text = "200.0 (9.99%)"
+        label.text = "--- (---%)"
         label.textColor = .green
         label.textAlignment = .center
         return label
@@ -97,7 +99,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    private let detailOHLAPrice: [UILabel] = ["2000.5", "1450.5", "1110.0", "1270.5"].map{ titles in
+    private let detailOHLAPrice: [UILabel] = ["---", "---", "---", "---"].map{ titles in
         let label = UILabel()
         label.text = titles
         label.textAlignment = .center
@@ -158,7 +160,7 @@ class DetailViewController: UIViewController {
         return view
     }()
     
-    private let detailPePbDy: [UILabel] = ["殖利率: 2.71", "本益比: 615.00", "淨值比: 0.58"].map{ titles in
+    private let detailPePbDy: [UILabel] = ["殖利率: ---", "本益比: ---", "淨值比: ---"].map{ titles in
         let label = UILabel()
         label.text = titles
         label.textAlignment = .left
@@ -176,7 +178,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    private let detailValueVolumeAmp: [UILabel] = ["成交值(萬): 310198", "成交量(張): 54538", "當日振幅: 1.77"].map{ titles in
+    private let detailValueVolumeAmp: [UILabel] = ["成交值(萬): ---", "成交量(張): ---", "當日振幅: ---"].map{ titles in
         let label = UILabel()
         label.text = titles
         label.textAlignment = .left
@@ -255,6 +257,7 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addFavoriteTap))
+        
         view.addSubview(detailUIview)
         detailUIview.addSubview(detailName)
         detailUIview.addSubview(detailPrice)
@@ -272,24 +275,70 @@ class DetailViewController: UIViewController {
         detailDataUIview.addSubview(bidValue)
         detailDataUIview.addSubview(askValue)
         
-        detailName.text = "台積電"
-        
         setCandleData()
         configureUI()
         configureStackButton()
+        configureDetailData()
         
     }
     
     @objc private func addFavoriteTap(){
-        doc.setData(["2887" : "台新金", "2330": "台積電"])
+//        doc.setData(["2330": "台積電"])"
+        doc.updateData([self.title : detailName.text ?? ""])
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(subFavoriteTap))
     }
     
     @objc private func subFavoriteTap() {
-        doc.updateData(["2887" : FieldValue.delete()])
+        doc.updateData([self.title : FieldValue.delete()])
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addFavoriteTap))
+    }
+    
+    func configureDetailData() {
+        viewModel.GetQuoteSingle(symbolCode: self.title ?? "無資料") { [weak self] result in
+            switch result {
+            case .success(let quoteSingle):
+                let bidPercent = quoteSingle.total.tradeVolumeAtBid / (quoteSingle.total.tradeVolumeAtBid + quoteSingle.total.tradeVolumeAtAsk)
+                let bidPercentFormat = String(format: "%.0f", (bidPercent * 100))
+                let askPercent = quoteSingle.total.tradeVolumeAtAsk / (quoteSingle.total.tradeVolumeAtBid + quoteSingle.total.tradeVolumeAtAsk)
+                let askPercentFormat = String(format: "%.0f", (askPercent * 100))
+                let singleTradeValue = quoteSingle.total.tradeValue / 10000
+                let singleTradeValueFormat = String(format: "%.1f", singleTradeValue)
+                
+                DispatchQueue.main.async {
+                    self?.detailName.text = quoteSingle.name
+                    self?.detailPrice.text = "\(quoteSingle.closePrice)"
+                    self?.detailChange.text = "\(quoteSingle.change) (\(quoteSingle.changePercent)%)"
+                    self?.detailOHLAPrice[0].text = "\(quoteSingle.highPrice)"
+                    self?.detailOHLAPrice[1].text = "\(quoteSingle.openPrice)"
+                    self?.detailOHLAPrice[2].text = "\(quoteSingle.lowPrice)"
+                    self?.detailOHLAPrice[3].text = "\(quoteSingle.avgPrice)"
+                    self?.detailValueVolumeAmp[0].text = "成交值(萬): \(singleTradeValueFormat)"
+                    self?.detailValueVolumeAmp[1].text = "成交量(張): \(quoteSingle.total.tradeVolume)"
+                    self?.detailValueVolumeAmp[2].text = "當日振幅: \(quoteSingle.amplitude)"
+                    self?.bidValue.text = "內盤 \(quoteSingle.total.tradeVolumeAtBid) (\(bidPercentFormat)%)"
+                    self?.askValue.text = "外盤 \(quoteSingle.total.tradeVolumeAtAsk) (\(askPercentFormat)%)"
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+        
+        viewModel.GetPeDyPbCall { [weak self] result in
+            switch result {
+            case .success(let peDyPbData):
+                
+                DispatchQueue.main.async {
+                    let singlePeDyPbData = peDyPbData.first {$0.Code == self?.title}
+                    self?.detailPePbDy[0].text = "殖利率: \(singlePeDyPbData?.DividendYield ?? "---")"
+                    self?.detailPePbDy[1].text = "本益比: \(singlePeDyPbData?.PEratio ?? "---")"
+                    self?.detailPePbDy[2].text = "淨值比: \(singlePeDyPbData?.PBratio ?? "---")"
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     func setCandleData() {
