@@ -13,7 +13,9 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "FavoriteCollectionViewCell"
     
-    private let favoriteCode: UILabel = {
+    var quoteSingles: QuoteSingleModels?
+    
+    private var favoriteCode: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "2330"
@@ -80,6 +82,14 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func configure(with quoteSingles: QuoteSingleModels) {
+        self.favoriteCode.text = quoteSingles.symbol
+        self.favoriteName.text = quoteSingles.name
+        self.favoritePrice.text = "\(quoteSingles.closePrice)"
+        self.favoriteChange.text = "\(quoteSingles.change)"
+        self.favoriteChangePercent.text = "(\(quoteSingles.changePercent)%)"
     }
     
     private func configureUI() {

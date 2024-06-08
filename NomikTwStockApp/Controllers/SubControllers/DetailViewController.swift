@@ -18,6 +18,7 @@ class DetailViewController: UIViewController {
     
     private let dataBase = Firestore.firestore()
     private lazy var doc = dataBase.document("Favorite/TwStock")
+    private var checkFavoriteCode: [String] = []
     
     private enum SectionTabs: String {
         case candle5K = "5K"
@@ -114,7 +115,7 @@ class DetailViewController: UIViewController {
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = .green
-        label.text = "內盤 25242 (43%)"
+        label.text = "內盤 --- (--%)"
         return label
     }()
     
@@ -124,7 +125,7 @@ class DetailViewController: UIViewController {
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 12, weight: .semibold)
         label.textColor = .red
-        label.text = "外盤 53456 (67%)"
+        label.text = "外盤 --- (--%)"
         return label
     }()
     
@@ -256,8 +257,6 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addFavoriteTap))
-        
         view.addSubview(detailUIview)
         detailUIview.addSubview(detailName)
         detailUIview.addSubview(detailPrice)
@@ -279,7 +278,17 @@ class DetailViewController: UIViewController {
         configureUI()
         configureStackButton()
         configureDetailData()
-        
+        configureStarUI()
+    }
+    
+    private func configureStarUI() {
+        checkFavorite { result in
+            if result.contains(where: {$0 == self.title}) {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(self.subFavoriteTap))
+            }else {
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(self.addFavoriteTap))
+            }
+        }
     }
     
     @objc private func addFavoriteTap(){
@@ -295,12 +304,24 @@ class DetailViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addFavoriteTap))
     }
     
+    private func checkFavorite(completion: @escaping([String]) -> Void) {
+        doc.getDocument { snapshot, error in
+            guard let data = snapshot?.data(), error == nil else { return }
+            DispatchQueue.main.async {
+                let keysCollection: Dictionary<String, Any>.Keys = data.keys
+                self.checkFavoriteCode = Array(keysCollection)
+                completion(self.checkFavoriteCode)
+            }
+        }
+    }
+    
     func configureDetailData() {
         viewModel.GetQuoteSingle(symbolCode: self.title ?? "無資料") { [weak self] result in
             switch result {
             case .success(let quoteSingle):
                 let bidPercent = quoteSingle.total.tradeVolumeAtBid / (quoteSingle.total.tradeVolumeAtBid + quoteSingle.total.tradeVolumeAtAsk)
                 let bidPercentFormat = String(format: "%.0f", (bidPercent * 100))
+                let bidPercentFormatLine = String(format: "%.2f", bidPercent)
                 let askPercent = quoteSingle.total.tradeVolumeAtAsk / (quoteSingle.total.tradeVolumeAtBid + quoteSingle.total.tradeVolumeAtAsk)
                 let askPercentFormat = String(format: "%.0f", (askPercent * 100))
                 let singleTradeValue = quoteSingle.total.tradeValue / 10000
@@ -319,6 +340,7 @@ class DetailViewController: UIViewController {
                     self?.detailValueVolumeAmp[2].text = "當日振幅: \(quoteSingle.amplitude)"
                     self?.bidValue.text = "內盤 \(quoteSingle.total.tradeVolumeAtBid) (\(bidPercentFormat)%)"
                     self?.askValue.text = "外盤 \(quoteSingle.total.tradeVolumeAtAsk) (\(askPercentFormat)%)"
+                    self?.detailBidAskLine.progress = Float(bidPercentFormatLine) ?? 0.0
                 }
             case .failure(let error):
                 print(error.localizedDescription)

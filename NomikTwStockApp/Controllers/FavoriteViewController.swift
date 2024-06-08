@@ -13,7 +13,9 @@ class FavoriteViewController: UIViewController {
     
     private let dataBase = Firestore.firestore()
     private lazy var doc = dataBase.document("Favorite/TwStock")
-
+    private var favoriteCode: [String] = []
+    
+    private var viewModel = StockDataViewModels()
     
     private let favoriteCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -37,11 +39,13 @@ class FavoriteViewController: UIViewController {
         createSearchBar()
     }
     
-    private func readData() {
+    private func readData(completion: @escaping ([String]) -> Void){
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return }
             DispatchQueue.main.async {
-                print(data.keys)
+                let keysCollection: Dictionary<String, Any>.Keys = data.keys
+                self.favoriteCode = Array(keysCollection)
+                completion(self.favoriteCode)
             }
         }
     }
@@ -53,7 +57,9 @@ class FavoriteViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        readData()
+        readData { _ in 
+            self.favoriteCollectionView.reloadData()
+        }
     }
     
     @objc func didTapUser() {
@@ -71,17 +77,29 @@ class FavoriteViewController: UIViewController {
 
 extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return favoriteCode.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteCollectionViewCell.identifier, for: indexPath) as? FavoriteCollectionViewCell else { return UICollectionViewCell() }
+        
+        viewModel.GetQuoteSingle(symbolCode: favoriteCode[indexPath.row]) { [weak self] result in
+            switch result {
+            case .success(let favoriteData):
+                DispatchQueue.main.async {
+                    cell.configure(with: favoriteData)
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let DetailVC = DetailViewController()
-        DetailVC.title = "2330"
+        DetailVC.title = favoriteCode[indexPath.row]
         
         navigationController?.pushViewController(DetailVC, animated: true)
     }
