@@ -36,16 +36,9 @@ class HomeViewController: UIViewController {
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapUser))
-        
         reloadViewData()
         startTimer()
         
-    }
-    
-    @objc func didTapUser() {
-        let vc = UserViewController()
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func startTimer() {
@@ -106,7 +99,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 100
+        return 50
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

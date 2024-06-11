@@ -28,7 +28,7 @@ class MainTabbarController: UITabBarController {
         vc1.navigationBar.prefersLargeTitles = true
         vc2.navigationBar.prefersLargeTitles = true
         vc3.navigationBar.prefersLargeTitles = true
-//        vc4.navigationBar.prefersLargeTitles = true
+
         
         vc1.tabBarItem.image = UIImage(systemName: "house")
         vc2.tabBarItem.image = UIImage(systemName: "heart")

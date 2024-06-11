@@ -17,7 +17,8 @@ class DetailViewController: UIViewController {
     private var padding: CGFloat = 10.0
     
     private let dataBase = Firestore.firestore()
-    private lazy var doc = dataBase.document("Favorite/TwStock")
+    private lazy var doc = dataBase.document("Favorite/TwStocks")
+    
     private var checkFavoriteCode: [String] = []
     
     private enum SectionTabs: String {
@@ -205,18 +206,17 @@ class DetailViewController: UIViewController {
         candle.chartDescription.enabled = false
         candle.legend.enabled = false
         candle.xAxis.labelPosition = .bottom
+        candle.xAxis.enabled = false
         candle.xAxis.drawGridLinesEnabled = false
         candle.leftAxis.drawGridLinesEnabled = false
         candle.rightAxis.enabled = false
         
         candle.xAxis.axisMinimum = -1.0
-        candle.xAxis.axisMaximum = 15.0
+        candle.xAxis.axisMaximum = 30
         candle.xAxis.granularity = 1.0
-        candle.xAxis.granularityEnabled = true
+        candle.xAxis.granularityEnabled = false
 
-        candle.leftAxis.axisMinimum = 50.0
-        candle.leftAxis.axisMaximum = 200.0
-        candle.leftAxis.granularity = 10.0
+        candle.leftAxis.granularity = 6
         candle.leftAxis.granularityEnabled = true
         return candle
     }()
@@ -274,25 +274,32 @@ class DetailViewController: UIViewController {
         detailDataUIview.addSubview(bidValue)
         detailDataUIview.addSubview(askValue)
         
-        setCandleData()
         configureUI()
         configureStackButton()
-        configureDetailData()
         configureStarUI()
+        setCandleData(to: "5")
+        configureDetailData()
+        
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            self?.configureDetailData()
+        }
     }
     
     private func configureStarUI() {
+        
+        doc.getDocument { snapshot, error in
+            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
+        }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(self.addFavoriteTap))
+        
         checkFavorite { result in
             if result.contains(where: {$0 == self.title}) {
                 self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(self.subFavoriteTap))
-            }else {
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(self.addFavoriteTap))
             }
         }
     }
     
     @objc private func addFavoriteTap(){
-//        doc.setData(["2330": "台積電"])"
         doc.updateData([self.title : detailName.text ?? ""])
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(subFavoriteTap))
@@ -363,35 +370,46 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func setCandleData() {
-        let yVals = [
-            CandleChartDataEntry(x: 0.0, shadowH: 120.0, shadowL: 100.0, open: 120.0, close: 120.0),
-            CandleChartDataEntry(x: 1.0, shadowH: 160.0, shadowL: 120.0, open: 120.0, close: 150.0),
-            CandleChartDataEntry(x: 2.0, shadowH: 100.0, shadowL: 100.0, open: 120.0, close: 100.0),
-            CandleChartDataEntry(x: 3.0, shadowH: 99.0, shadowL: 120.0, open: 120.0, close: 150.0),
-            CandleChartDataEntry(x: 5.0, shadowH: 70.0, shadowL: 50.0, open: 120.0, close: 150.0),
-            CandleChartDataEntry(x: 6.0, shadowH: 120.0, shadowL: 99.0, open: 150.0, close: 99.0),
-            CandleChartDataEntry(x: 7.0, shadowH: 200, shadowL: 100, open: 100, close: 300),
-            CandleChartDataEntry(x: 8.0, shadowH: 150.0, shadowL: 50.0, open: 99.0, close: 99.0),
-            CandleChartDataEntry(x: 9.0, shadowH: 70.0, shadowL: 50.0, open: 120.0, close: 99.0),
-            CandleChartDataEntry(x: 10.0, shadowH: 100.0, shadowL: 50.0, open: 100.0, close: 99.0),
-            CandleChartDataEntry(x: 11.0, shadowH: 70.0, shadowL: 50.0, open: 120.0, close: 100.0),
-        ]
-
-        let set1 = CandleChartDataSet(entries: yVals, label: "Data Set")
-        set1.axisDependency = .left
-        set1.setColor(UIColor.systemBackground)
-        set1.shadowColor = .darkGray
-        set1.shadowWidth = 0.7
-        set1.decreasingColor = .red
-        set1.decreasingFilled = true
-        set1.increasingColor = .green
-        set1.increasingFilled = true
-        set1.neutralColor = .white
-        set1.drawValuesEnabled = false
+    func setCandleData(to dataTime: String) {
         
-        candleStickChartView.data = CandleChartData(dataSet: set1)
-
+        var yVals: [CandleChartDataEntry] = []
+        var xLabels: [String] = []
+        
+        viewModel.GetCandle(symbolCode: self.title!, timeframe: dataTime) { [weak self] re in
+            switch re {
+            case .success(let candles):
+                var temp = candles.data.count - 1
+                
+                for i in (0..<candles.data.count).reversed(){
+                    yVals.append(CandleChartDataEntry(x: Double(temp - i), shadowH: candles.data[i].high, shadowL: candles.data[i].low, open: candles.data[i].open, close: candles.data[i].close))
+                    xLabels.append(candles.data[i].date)
+                }
+                
+                DispatchQueue.main.async {
+                    self?.candleStickChartView.leftAxis.axisMinimum = candles.data.last!.open - candles.data.last!.open * 0.23
+                    self?.candleStickChartView.leftAxis.axisMaximum = candles.data.last!.open + candles.data.last!.open * 0.23
+                    
+                    let set1 = CandleChartDataSet(entries: yVals, label: "Data Set")
+                    set1.axisDependency = .left
+                    set1.setColor(UIColor.systemBackground)
+                    set1.shadowColor = .darkGray
+                    set1.shadowWidth = 0.7
+                    set1.decreasingColor = .red
+                    set1.decreasingFilled = true
+                    set1.increasingColor = .green
+                    set1.increasingFilled = true
+                    set1.neutralColor = .white
+                    set1.drawValuesEnabled = false
+                    
+                    self?.candleStickChartView.data = CandleChartData(dataSet: set1)
+                    self?.candleStickChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: xLabels)
+                }
+                
+                
+            case .failure(let failure):
+                print(failure.localizedDescription)
+            }
+        }
     }
     
     private func configureStackButton(){
@@ -418,16 +436,22 @@ class DetailViewController: UIViewController {
         switch label {
         case SectionTabs.candle5K.rawValue:
             sectionTab = 0
+            setCandleData(to: "5")
         case SectionTabs.candle15K.rawValue:
             sectionTab = 1
+            setCandleData(to: "15")
         case SectionTabs.candle60K.rawValue:
             sectionTab = 2
+            setCandleData(to: "60")
         case SectionTabs.candle日K.rawValue:
             sectionTab = 3
+            setCandleData(to: "D")
         case SectionTabs.candle週K.rawValue:
             sectionTab = 4
+            setCandleData(to: "W")
         case SectionTabs.candle月K.rawValue:
             sectionTab = 5
+            setCandleData(to: "M")
         default:
             sectionTab = 0
         }

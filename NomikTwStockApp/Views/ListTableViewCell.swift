@@ -82,7 +82,6 @@ class ListTableViewCell: UITableViewCell {
         contentView.addSubview(stockPriceLabel)
         contentView.addSubview(stockChangePercentLabel)
         
-        // 配置 UI 佈局
         configureUI()
     }
     

@@ -12,7 +12,7 @@ class FavoriteViewController: UIViewController {
     private let searchVC = UISearchController(searchResultsController: SearchViewController())
     
     private let dataBase = Firestore.firestore()
-    private lazy var doc = dataBase.document("Favorite/TwStock")
+    private lazy var doc = dataBase.document("Favorite/TwStocks")
     private var favoriteCode: [String] = []
     
     private var viewModel = StockDataViewModels()
@@ -34,14 +34,13 @@ class FavoriteViewController: UIViewController {
         favoriteCollectionView.delegate = self
         favoriteCollectionView.dataSource = self
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapUser))
-        
         createSearchBar()
     }
     
     private func readData(completion: @escaping ([String]) -> Void){
         doc.getDocument { snapshot, error in
-            guard let data = snapshot?.data(), error == nil else { return }
+            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
+            
             DispatchQueue.main.async {
                 let keysCollection: Dictionary<String, Any>.Keys = data.keys
                 self.favoriteCode = Array(keysCollection)
@@ -60,11 +59,6 @@ class FavoriteViewController: UIViewController {
         readData { _ in 
             self.favoriteCollectionView.reloadData()
         }
-    }
-    
-    @objc func didTapUser() {
-        let vc = UserViewController()
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func createSearchBar() {
@@ -93,7 +87,6 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
                 print(error.localizedDescription)
             }
         }
-        
         return cell
     }
     
@@ -122,6 +115,5 @@ extension FavoriteViewController: UICollectionViewDelegateFlowLayout {
 
 extension FavoriteViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
     }
 }

@@ -28,18 +28,12 @@ class UnusualViewController: UIViewController {
         unusualTableView.delegate = self
         unusualTableView.dataSource = self
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person"), style: .plain, target: self, action: #selector(didTapUser))
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         unusualTableView.frame = view.bounds
         
-    }
-    
-    @objc func didTapUser() {
-        let vc = UserViewController()
-        navigationController?.pushViewController(vc, animated: true)
     }
 
 }

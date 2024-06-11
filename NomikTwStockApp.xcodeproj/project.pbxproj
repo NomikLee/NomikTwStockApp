@@ -24,7 +24,6 @@
 		6F30FEB12C0D562E00C079CD /* QuoteSingleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30FEAE2C0D562E00C079CD /* QuoteSingleModels.swift */; };
 		6F30FEB22C0D562E00C079CD /* NotetransModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30FEAF2C0D562E00C079CD /* NotetransModels.swift */; };
 		6F30FEB52C0D564500C079CD /* UnusualDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30FEB32C0D564500C079CD /* UnusualDetailViewController.swift */; };
-		6F30FEB62C0D564500C079CD /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F30FEB42C0D564500C079CD /* UserViewController.swift */; };
 		6F30FEB92C0D569E00C079CD /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6F30FEB82C0D569E00C079CD /* FirebaseAnalytics */; };
 		6F30FEBB2C0D569E00C079CD /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 6F30FEBA2C0D569E00C079CD /* FirebaseAnalyticsOnDeviceConversion */; };
 		6F30FEBD2C0D569E00C079CD /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 6F30FEBC2C0D569E00C079CD /* FirebaseAnalyticsSwift */; };
@@ -69,6 +68,7 @@
 		6FD3645A2BF9D296001CE94E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD364592BF9D296001CE94E /* Constants.swift */; };
 		6FD3645E2BF9DCAB001CE94E /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3645D2BF9DCAB001CE94E /* APIService.swift */; };
 		6FDA37492BFB4D4B00FD33BC /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 6FDA37482BFB4D4B00FD33BC /* DGCharts */; };
+		6FF112662C15802B008F2B27 /* CandleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FF112652C15802B008F2B27 /* CandleModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -102,7 +102,6 @@
 		6F30FEAE2C0D562E00C079CD /* QuoteSingleModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuoteSingleModels.swift; sourceTree = "<group>"; };
 		6F30FEAF2C0D562E00C079CD /* NotetransModels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotetransModels.swift; sourceTree = "<group>"; };
 		6F30FEB32C0D564500C079CD /* UnusualDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnusualDetailViewController.swift; sourceTree = "<group>"; };
-		6F30FEB42C0D564500C079CD /* UserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		6F30FEF32C0D570F00C079CD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDataModels.swift; sourceTree = "<group>"; };
 		6FC8098B2BFAD6C100DE1658 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
@@ -120,6 +119,7 @@
 		6FD364572BF9BE11001CE94E /* UnusualViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnusualViewController.swift; sourceTree = "<group>"; };
 		6FD364592BF9D296001CE94E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6FD3645D2BF9DCAB001CE94E /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		6FF112652C15802B008F2B27 /* CandleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CandleModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,7 +168,6 @@
 				6F1E9AC72C0083B70005E004 /* DetailViewController.swift */,
 				6F1E9AC92C0086190005E004 /* SearchViewController.swift */,
 				6F30FEB32C0D564500C079CD /* UnusualDetailViewController.swift */,
-				6F30FEB42C0D564500C079CD /* UserViewController.swift */,
 			);
 			path = SubControllers;
 			sourceTree = "<group>";
@@ -239,6 +238,7 @@
 				6F30FEAF2C0D562E00C079CD /* NotetransModels.swift */,
 				6F30FEAD2C0D562E00C079CD /* PunishModels.swift */,
 				6FC9F10A2C1454F700DE9413 /* PeDyPbModels.swift */,
+				6FF112652C15802B008F2B27 /* CandleModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -400,9 +400,9 @@
 				6F1E9ACA2C0086190005E004 /* SearchViewController.swift in Sources */,
 				6F1E9AC82C0083B70005E004 /* DetailViewController.swift in Sources */,
 				6F30FEB52C0D564500C079CD /* UnusualDetailViewController.swift in Sources */,
+				6FF112662C15802B008F2B27 /* CandleModels.swift in Sources */,
 				6F1E9AC32BFDD56D0005E004 /* StockDataViewModels.swift in Sources */,
 				6FC9F10B2C1454F700DE9413 /* PeDyPbModels.swift in Sources */,
-				6F30FEB62C0D564500C079CD /* UserViewController.swift in Sources */,
 				6F30FEA92C0D55F800C079CD /* CollectionNotetransTableViewCell.swift in Sources */,
 				6FC8098E2BFB365100DE1658 /* TwiiHeaderView.swift in Sources */,
 				6F1E9ABD2BFDC8970005E004 /* MoversUPModels.swift in Sources */,

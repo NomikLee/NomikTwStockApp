@@ -18,7 +18,7 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     private var favoriteCode: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "2330"
+        label.text = "---"
         label.numberOfLines = 0
         label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -28,7 +28,7 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     private let favoriteName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "台積電"
+        label.text = "---"
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
@@ -37,7 +37,7 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     private let favoritePrice: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "1069.0"
+        label.text = "---"
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
@@ -46,20 +46,20 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     private let favoriteChange: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "100.0"
+        label.text = "---"
         label.numberOfLines = 0
-        label.textColor = .systemRed
         label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
     private let favoriteChangePercent: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "(10.00%)"
+        label.text = "(---%)"
         label.numberOfLines = 0
-        label.textColor = .systemRed
         label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .white
         return label
     }()
     
@@ -74,7 +74,6 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(favoriteChangePercent)
         
         contentView.layer.borderWidth = 2
-        contentView.layer.borderColor = UIColor.systemRed.cgColor
         contentView.layer.cornerRadius = 10
         
         configureUI()
@@ -90,6 +89,20 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         self.favoritePrice.text = "\(quoteSingles.closePrice)"
         self.favoriteChange.text = "\(quoteSingles.change)"
         self.favoriteChangePercent.text = "(\(quoteSingles.changePercent)%)"
+        
+        if quoteSingles.closePrice > quoteSingles.openPrice {
+            contentView.layer.borderColor = UIColor.systemRed.cgColor
+            self.favoriteChange.textColor = .systemRed
+            self.favoriteChangePercent.textColor = .systemRed
+        }else if quoteSingles.closePrice < quoteSingles.openPrice {
+            contentView.layer.borderColor = UIColor.systemGreen.cgColor
+            self.favoriteChange.textColor = .systemGreen
+            self.favoriteChangePercent.textColor = .systemGreen
+        }else {
+            contentView.layer.borderColor = UIColor.white.cgColor
+            self.favoriteChange.textColor = .white
+            self.favoriteChangePercent.textColor = .white
+        }
     }
     
     private func configureUI() {
