@@ -46,9 +46,9 @@ class DetailViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
         view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.systemBackground.cgColor
+        view.layer.borderColor = UIColor.systemOrange.cgColor
         view.layer.cornerRadius = 20
-        view.backgroundColor = .systemPurple
+        view.backgroundColor = .systemGray6
         return view
     }()
     
@@ -77,7 +77,6 @@ class DetailViewController: UIViewController {
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.text = "--- (---%)"
-        label.textColor = .green
         label.textAlignment = .center
         return label
     }()
@@ -372,6 +371,14 @@ class DetailViewController: UIViewController {
                     self?.bidValue.text = "內盤 \(quoteSingle.total.tradeVolumeAtBid) (\(bidPercentFormat)%)"
                     self?.askValue.text = "外盤 \(quoteSingle.total.tradeVolumeAtAsk) (\(askPercentFormat)%)"
                     self?.detailBidAskLine.progress = Float(bidPercentFormatLine) ?? 0.0
+                    
+                    if quoteSingle.change > 0 {
+                        self?.detailChange.textColor = .systemRed
+                    }else if quoteSingle.change < 0 {
+                        self?.detailChange.textColor = .systemGreen
+                    }else {
+                        self?.detailChange.textColor = .white
+                    }
                 }
             case .failure(let error):
                 print(error.localizedDescription)
@@ -508,9 +515,10 @@ class DetailViewController: UIViewController {
             detailUIview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             detailUIview.heightAnchor.constraint(equalToConstant: 90),
             
-            detailUiMiniview.topAnchor.constraint(equalTo: detailUIview.topAnchor),
+            detailUiMiniview.topAnchor.constraint(equalTo: detailUIview.topAnchor, constant: 2),
+            detailUiMiniview.bottomAnchor.constraint(equalTo: detailUIview.bottomAnchor, constant: -2),
             detailUiMiniview.leadingAnchor.constraint(equalTo: detailUIview.centerXAnchor, constant: 50),
-            detailUiMiniview.trailingAnchor.constraint(equalTo: detailUIview.trailingAnchor),
+            detailUiMiniview.trailingAnchor.constraint(equalTo: detailUIview.trailingAnchor, constant: -2),
             detailUiMiniview.heightAnchor.constraint(equalToConstant: 90),
             
             detailName.centerYAnchor.constraint(equalTo: detailUIview.centerYAnchor),

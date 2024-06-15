@@ -51,7 +51,6 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         let detailVC = DetailViewController()
         detailVC.title = "\(self.searchResults[indexPath.row].symbol ?? "無資料")"
         let navController = UINavigationController(rootViewController: detailVC)
-        
         self.present(navController, animated: true, completion: nil)
     }
     

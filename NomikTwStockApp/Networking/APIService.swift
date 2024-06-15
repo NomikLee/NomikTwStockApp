@@ -233,7 +233,7 @@ class APIService {
         let queryItem = [
             URLQueryItem(name: "timeframe", value: timeframe),
             URLQueryItem(name: "fields", value: "open,high,low,close,volume"),
-            URLQueryItem(name: "from", value: "2024-05-01")
+            URLQueryItem(name: "from", value: "2024-03-01")
         ]
         
         urlComponents?.queryItems = queryItem
