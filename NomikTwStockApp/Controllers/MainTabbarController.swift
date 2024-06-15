@@ -38,6 +38,8 @@ class MainTabbarController: UITabBarController {
         vc2.tabBarItem.title = "自選股"
         vc3.tabBarItem.title = "注意處置股"
         
+        tabBar.tintColor = .systemOrange
+        
         setViewControllers([vc1, vc2, vc3], animated: true)
     }
 }

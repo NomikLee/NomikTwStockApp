@@ -37,7 +37,18 @@ class DetailViewController: UIViewController {
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.systemBackground.cgColor
         view.layer.cornerRadius = 20
-        view.backgroundColor = .systemGray3
+        view.backgroundColor = .systemBlue
+        return view
+    }()
+    
+    private let detailUiMiniview: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.masksToBounds = true
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.systemBackground.cgColor
+        view.layer.cornerRadius = 20
+        view.backgroundColor = .systemPurple
         return view
     }()
     
@@ -198,7 +209,12 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    
+    private let favoritePushButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .systemRed
+        return button
+    }()
     
     private let candleStickChartView: CandleStickChartView = {
         let candle = CandleStickChartView()
@@ -257,10 +273,13 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
+        view.backgroundColor = UIColor(white: 0, alpha: 1)
         view.addSubview(detailUIview)
         detailUIview.addSubview(detailName)
-        detailUIview.addSubview(detailPrice)
-        detailUIview.addSubview(detailChange)
+        detailUIview.addSubview(detailUiMiniview)
+        detailUiMiniview.addSubview(detailPrice)
+        detailUiMiniview.addSubview(detailChange)
+        
         view.addSubview(candleStickChartView)
         view.addSubview(sectionStack)
         view.addSubview(detailDataUIview)
@@ -273,6 +292,7 @@ class DetailViewController: UIViewController {
         detailDataUIview.addSubview(detailBidAskLine)
         detailDataUIview.addSubview(bidValue)
         detailDataUIview.addSubview(askValue)
+        detailDataUIview.addSubview(favoritePushButton)
         
         configureUI()
         configureStackButton()
@@ -290,11 +310,13 @@ class DetailViewController: UIViewController {
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
         }
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(self.addFavoriteTap))
+        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
         
         checkFavorite { result in
             if result.contains(where: {$0 == self.title}) {
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(self.subFavoriteTap))
+                self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
             }
         }
     }
@@ -302,13 +324,15 @@ class DetailViewController: UIViewController {
     @objc private func addFavoriteTap(){
         doc.updateData([self.title : detailName.text ?? ""])
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star.fill"), style: .plain, target: self, action: #selector(subFavoriteTap))
+        self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
     }
     
     @objc private func subFavoriteTap() {
         doc.updateData([self.title : FieldValue.delete()])
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addFavoriteTap))
+        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
     }
     
     private func checkFavorite(completion: @escaping([String]) -> Void) {
@@ -484,6 +508,11 @@ class DetailViewController: UIViewController {
             detailUIview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             detailUIview.heightAnchor.constraint(equalToConstant: 90),
             
+            detailUiMiniview.topAnchor.constraint(equalTo: detailUIview.topAnchor),
+            detailUiMiniview.leadingAnchor.constraint(equalTo: detailUIview.centerXAnchor, constant: 50),
+            detailUiMiniview.trailingAnchor.constraint(equalTo: detailUIview.trailingAnchor),
+            detailUiMiniview.heightAnchor.constraint(equalToConstant: 90),
+            
             detailName.centerYAnchor.constraint(equalTo: detailUIview.centerYAnchor),
             detailName.leadingAnchor.constraint(equalTo: detailUIview.leadingAnchor, constant: 20),
             
@@ -547,6 +576,9 @@ class DetailViewController: UIViewController {
             detailValueVolumeAmpStack.topAnchor.constraint(equalTo: detailHorizontalLine.bottomAnchor, constant: padding),
             detailValueVolumeAmpStack.leadingAnchor.constraint(equalTo: detailStraightLine.leadingAnchor, constant: padding),
             detailValueVolumeAmpStack.bottomAnchor.constraint(equalTo: detailDataUIview.bottomAnchor, constant: -20),
+            
+            favoritePushButton.bottomAnchor.constraint(equalTo: detailDataUIview.bottomAnchor, constant: -20),
+            favoritePushButton.trailingAnchor.constraint(equalTo: detailDataUIview.trailingAnchor, constant: -20)
             
         ])
     }

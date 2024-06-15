@@ -254,6 +254,35 @@ class APIService {
         }
         tast.resume()
     }
+    
+    // 搜尋欄 API 請求
+    func tickersCall(completion: @escaping((Result<TickersResponse, Error>) -> Void)) {
+        var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.tickers.valueEndpoints())
+        
+        let queryItem = [
+            URLQueryItem(name: "type", value: "EQUITY"),
+            URLQueryItem(name: "exchange", value: "TWSE")
+        ]
+        
+        urlComponents?.queryItems = queryItem
+        
+        guard let urlComponents = urlComponents?.url else { return }
+        
+        var request = URLRequest(url: urlComponents)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            do {
+                let tickersDatas = try JSONDecoder().decode(TickersResponse.self, from: data)
+                completion(.success(tickersDatas))
+            }catch {
+                print("Error: JSON decoding failed with error - \(error)")
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
 }
 
 

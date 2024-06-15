@@ -116,5 +116,18 @@ class StockDataViewModels {
             }
         }
     }
+    
+    //獲取搜尋欄數據
+    func GetTickers(completion: @escaping((Result<TickersResponse, Error>) -> Void)) {
+        APIService.shared.tickersCall { [weak self] result in
+            switch result {
+            case .success(let tickersCallData):
+                completion(.success(tickersCallData))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
 }
 

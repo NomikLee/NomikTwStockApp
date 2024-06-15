@@ -35,6 +35,7 @@ class FavoriteViewController: UIViewController {
         favoriteCollectionView.dataSource = self
         
         createSearchBar()
+    
     }
     
     private func readData(completion: @escaping ([String]) -> Void){
@@ -65,6 +66,7 @@ class FavoriteViewController: UIViewController {
         navigationItem.searchController = searchVC
         navigationItem.hidesSearchBarWhenScrolling = false
         searchVC.searchBar.delegate = self
+        searchVC.searchResultsUpdater = self
     }
 
 }
@@ -113,7 +115,31 @@ extension FavoriteViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension FavoriteViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchBarText = searchController.searchBar.text, let resultsController = searchController.searchResultsController as? SearchViewController else {
+            return
+        }
+        DispatchQueue.main.async {
+            self.viewModel.GetTickers { result in
+                switch result {
+                case .success(let searchDatas):
+                    if let data = searchDatas.data {
+                        if !searchBarText.isEmpty {
+                            resultsController.searchResults = data.filter { $0.name == searchBarText || $0.symbol == searchBarText }
+                        }
+                    }
+                    resultsController.searchTableView.reloadData()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        
     }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {}
+    
+    
 }
