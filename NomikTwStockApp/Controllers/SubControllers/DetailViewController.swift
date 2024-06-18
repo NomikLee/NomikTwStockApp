@@ -231,7 +231,7 @@ class DetailViewController: UIViewController {
         candle.xAxis.granularity = 1.0
         candle.xAxis.granularityEnabled = false
 
-        candle.leftAxis.granularity = 6
+        candle.leftAxis.granularity = 10
         candle.leftAxis.granularityEnabled = true
         return candle
     }()
@@ -531,8 +531,8 @@ class DetailViewController: UIViewController {
             detailChange.trailingAnchor.constraint(equalTo: detailPrice.trailingAnchor),
             
             candleStickChartView.topAnchor.constraint(equalTo: detailUIview.bottomAnchor, constant: padding),
-            candleStickChartView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
-            candleStickChartView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
+            candleStickChartView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            candleStickChartView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             candleStickChartView.bottomAnchor.constraint(equalTo: view.centerYAnchor),
             
             sectionStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),

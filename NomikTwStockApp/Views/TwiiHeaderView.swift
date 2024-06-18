@@ -102,10 +102,11 @@ class TwiiHeaderView: UIView {
         let xAxis = chartView.xAxis
         xAxis.labelPosition = .bottomInside
         xAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        xAxis.axisMaximum = 13.5
-        xAxis.axisMinimum = 9
+        xAxis.axisMinimum = 0
+        xAxis.axisMaximum = 270
         xAxis.granularity = 1
         xAxis.drawGridLinesEnabled = false
+        xAxis.enabled = false
         
         return chartView
     }()
@@ -157,6 +158,7 @@ class TwiiHeaderView: UIView {
                 limitLine.lineWidth = 1
                 limitLine.lineColor = .systemYellow
                 
+                var temp = 0.0
                 for twiiDatas in twiiDataCall.data {
                     let dateString = twiiDatas.date
                     let dateFormatter = DateFormatter()
@@ -168,9 +170,10 @@ class TwiiHeaderView: UIView {
                         let reString = time.replacingOccurrences(of: ":", with: ".")
                         
                         if reString == "09.00" {
-                            entrieData.append(ChartDataEntry(x: 9.00, y: Double(twiiDatas.open)))
+                            entrieData.append(ChartDataEntry(x: temp, y: Double(twiiDatas.open)))
                         } else {
-                            entrieData.append(ChartDataEntry(x: Double(reString) ?? 0.0, y: Double(twiiDatas.close)))
+                            temp += 1
+                            entrieData.append(ChartDataEntry(x: temp, y: Double(twiiDatas.close)))
                         }
                     } else {
                         print("日期字符串格式錯誤")
@@ -197,6 +200,7 @@ class TwiiHeaderView: UIView {
                     } else {
                         set1.drawFilledEnabled = false
                     }
+                    
                     
                     self.lineChart.leftAxis.axisMinimum = centerValue - yAxisRange / 2
                     self.lineChart.leftAxis.axisMaximum = centerValue + yAxisRange / 2
@@ -273,6 +277,6 @@ class TwiiHeaderView: UIView {
 // 擴展 TwiiHeaderView 以實現 ChartViewDelegate 協議
 extension TwiiHeaderView: ChartViewDelegate {
     func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
-        // 未實作的圖表值選中事件
+        
     }
 }
