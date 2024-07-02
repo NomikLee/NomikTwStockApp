@@ -10,20 +10,21 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
+    // MARK: - Variables
     var timer: Timer?
-    
     private var tapMoversUP: Bool = false
     private var tapMoversDown: Bool = false
     private var tapVolume: Bool = false
-    
     private var viewModel = StockDataViewModels()
     
+    // MARK: - UI Components
     private let homeTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ListTableViewCell.self, forCellReuseIdentifier: ListTableViewCell.identifier)
         return tableView
     }()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -32,15 +33,21 @@ class HomeViewController: UIViewController {
         homeTableView.delegate = self
         homeTableView.dataSource = self
         
+        // 初始並設置twiiHeaderView其框架
         let twiiHeaderView = TwiiHeaderView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 300))
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
         
         reloadViewData()
         startTimer()
-        
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        homeTableView.frame = view.bounds
+    }
+    
+    // MARK: - Functions
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
             self?.reloadViewData()
@@ -67,13 +74,9 @@ class HomeViewController: UIViewController {
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        homeTableView.frame = view.bounds
-    }
-    
 }
 
+// MARK: - Extension
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHeaderViewDelegate {
     
     func twiiHeaderViewDidTapMoversUP() {

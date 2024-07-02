@@ -9,7 +9,6 @@ import Foundation
 
 class APIService {
     
-    // 確保只有一個 APIService 實例
     static let shared = APIService()
     
     // TWII API 請求

@@ -25,6 +25,7 @@ class MainTabbarController: UITabBarController {
         let vc2 = UINavigationController(rootViewController: favoriteVC)
         let vc3 = UINavigationController(rootViewController: unusualVC)
         
+        // 設置大標題
         vc1.navigationBar.prefersLargeTitles = true
         vc2.navigationBar.prefersLargeTitles = true
         vc3.navigationBar.prefersLargeTitles = true

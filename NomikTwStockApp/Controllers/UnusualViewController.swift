@@ -9,17 +9,20 @@ import UIKit
 
 class UnusualViewController: UIViewController {
     
+    // MARK: - Variables
     private let viewModel = StockDataViewModels()
     
     let setUnusualTitle: [String] = ["⚠️ 注意股", "🛑 處置股"]
     
+    // MARK: - UI Components
     private let unusualTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(CollectionPunishTableViewCell.self, forCellReuseIdentifier: CollectionPunishTableViewCell.identifier)
         tableView.register(CollectionNotetransTableViewCell.self, forCellReuseIdentifier: CollectionNotetransTableViewCell.identifier)
         return tableView
     }()
-
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(unusualTableView)
@@ -38,9 +41,8 @@ class UnusualViewController: UIViewController {
 
 }
 
+// MARK: - Extension
 extension UnusualViewController: UITableViewDelegate, UITableViewDataSource, CollectionPushPunishDelegate, CollectionPushNotetransDelegate {
-    
-    
     func pushNotetransCollectionCell(_ notetran: [Notetrans], indexPush: Int) {
         let alert = UIAlertController(title: "\(notetran[indexPush].Code) \(notetran[indexPush].Name)", message: "\(notetran[indexPush].RecentlyMetAttentionSecuritiesCriteria)", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "確認", style: .cancel, handler: nil))
@@ -119,5 +121,4 @@ extension UnusualViewController: UITableViewDelegate, UITableViewDataSource, Col
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 50
     }
-    
 }
