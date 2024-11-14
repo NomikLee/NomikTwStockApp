@@ -13,8 +13,10 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "FavoriteCollectionViewCell"
     
+    // MARK: - Variables
     var quoteSingles: QuoteSingleModels?
     
+    // MARK: - UI Components
     private var favoriteCode: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -63,8 +65,7 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    
-    
+    // MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(favoriteCode)
@@ -83,6 +84,7 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Functions
     public func configure(with quoteSingles: QuoteSingleModels) {
         self.favoriteCode.text = quoteSingles.symbol
         self.favoriteName.text = quoteSingles.name
@@ -105,6 +107,9 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    // MARK: - Selectors
+    
+    // MARK: - UI Setup
     private func configureUI() {
         NSLayoutConstraint.activate([
             favoriteName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
@@ -122,7 +127,8 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
             favoritePrice.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 10),
             favoritePrice.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 20),
         ])
-        
     }
 }
+
+// MARK: - Extension
     

@@ -15,11 +15,12 @@ class CollectionNotetransTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionNotetransTableViewCell"
     
+    // MARK: - Variables
     weak var delegate: CollectionPushNotetransDelegate?
-    
     private let viewModel = StockDataViewModels()
     var notetrans: [Notetrans] = []
     
+    // MARK: - UI Components
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -30,6 +31,7 @@ class CollectionNotetransTableViewCell: UITableViewCell {
         return collectionView
     }()
     
+    // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .systemFill
@@ -48,15 +50,16 @@ class CollectionNotetransTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Functions
     public func configureNotetran(with notetran: [Notetrans]) {
         self.notetrans = notetran
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
     }
-    
 }
 
+// MARK: - Extension
 extension CollectionNotetransTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -76,6 +79,4 @@ extension CollectionNotetransTableViewCell: UICollectionViewDelegate, UICollecti
         cell.layer.borderColor = UIColor.systemYellow.cgColor
         return cell
     }
-
-
 }

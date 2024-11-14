@@ -31,6 +31,7 @@ class FavoriteViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
         view.addSubview(favoriteCollectionView)
         

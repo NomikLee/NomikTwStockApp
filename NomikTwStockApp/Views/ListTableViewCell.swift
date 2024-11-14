@@ -8,22 +8,17 @@
 import UIKit
 import Combine
 
-// 自定義 UITableViewCell 類
 class ListTableViewCell: UITableViewCell {
     
-    // 設置內邊距
-    private let padding: CGFloat = 10.0
-    
-    // 創建一個 StockUpDownViewModels 的實例
-    private var viewModel = StockUpDownViewModels()
-    // 使用 Set 來存儲 AnyCancellable，以便在取消訂閱時釋放資源
-    private var subscriptions: Set<AnyCancellable> = []
-    
-    // 設置靜態標識符
     static let identifier = "ListTableViewCell"
     
-    // 創建 symbolLabel，用於顯示股票代碼
-    private let symbolLabel: UILabel = {
+    // MARK: - Variables
+    private let padding: CGFloat = 10.0
+    private var viewModel = StockUpDownViewModels()
+    private var subscriptions: Set<AnyCancellable> = []
+    
+    // MARK: - UI Components
+    private let symbolLabel: UILabel = { // symbolLabel顯示股票號碼
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -32,8 +27,7 @@ class ListTableViewCell: UITableViewCell {
         return label
     }()
     
-    // 創建 nameLabel，用於顯示股票名稱
-    private let nameLabel: UILabel = {
+    private let nameLabel: UILabel = { // 創建 nameLabel顯示股票名稱
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -41,8 +35,7 @@ class ListTableViewCell: UITableViewCell {
         return label
     }()
     
-    // 創建 stockStatusLabel，用於顯示股票狀態（上漲、下跌等）
-    private let stockStatusLabel: UILabel = {
+    private let stockStatusLabel: UILabel = { // stockStatusLabel顯示股票狀態（上漲、下跌等）
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -53,8 +46,7 @@ class ListTableViewCell: UITableViewCell {
         return label
     }()
     
-    // 創建 stockPriceLabel，用於顯示股票價格
-    private let stockPriceLabel: UILabel = {
+    private let stockPriceLabel: UILabel = { //stockPriceLabel顯示股票價格
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -63,8 +55,7 @@ class ListTableViewCell: UITableViewCell {
         return label
     }()
     
-    // 創建 stockChangePercentLabel，用於顯示股票變化百分比
-    private let stockChangePercentLabel: UILabel = {
+    private let stockChangePercentLabel: UILabel = { //stockChangePercentLabel顯示股票變化百分比
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
@@ -72,8 +63,8 @@ class ListTableViewCell: UITableViewCell {
         label.textAlignment = .right
         return label
     }()
-
-    // 初始化方法，設置單元格的子視圖
+    
+    // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(symbolLabel)
@@ -84,26 +75,23 @@ class ListTableViewCell: UITableViewCell {
         
         configureUI()
     }
-    
-    // 必須實現的初始化方法
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 配置名稱數據的方法
+    // MARK: - Functions
     public func configureNameData(with intoSymbol: String, intoName: String) {
         self.symbolLabel.text = intoSymbol
         self.nameLabel.text = intoName
     }
     
-    // 配置股票數據的方法
     public func configureStockData(with intoClosePrice: Double, intoChange: Double, intoChangePercent: Double) {
         self.stockPriceLabel.text = "\(intoClosePrice)"
         self.stockChangePercentLabel.text = "\(intoChange) (\(intoChangePercent)%)"
         bindView(with: intoChangePercent)
     }
-    
-    // 綁定視圖與 ViewModel
+
     private func bindView(with changeValue: Double) {
         viewModel.intoChangeValue = changeValue
         self.stockStatusLabel.text = viewModel.stockPriceChange()
@@ -132,7 +120,7 @@ class ListTableViewCell: UITableViewCell {
         .store(in: &subscriptions)
     }
     
-    // 配置 UI 佈局的方法
+    // MARK: - UI Setup
     private func configureUI() {
         NSLayoutConstraint.activate([
             // 配置 nameLabel 的佈局
@@ -165,3 +153,5 @@ class ListTableViewCell: UITableViewCell {
         ])
     }
 }
+
+// MARK: - Extension

@@ -9,6 +9,9 @@ import UIKit
 
 class CoverViewController: UIViewController {
     
+    // MARK: - Variables
+    
+    // MARK: - UI Components
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "coverImage")
@@ -28,6 +31,7 @@ class CoverViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backgroundImageView)
@@ -42,12 +46,22 @@ class CoverViewController: UIViewController {
         applyGradientToButton()
     }
     
+    // MARK: - Functions
+    private func applyGradientToButton() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = enterButton.bounds
+        gradientLayer.colors = [UIColor.systemOrange.cgColor, UIColor.systemPurple.cgColor]
+        enterButton.layer.insertSublayer(gradientLayer, at: 0)
+    }
+    
+    // MARK: - Selectors
     @objc func didTapHome() {
         let tabbarVc = MainTabbarController()
         tabbarVc.modalPresentationStyle = .fullScreen
         present(tabbarVc, animated: true)
     }
     
+    // MARK: - UI Setup
     private func configureUI() {
         enterButton.addTarget(self, action: #selector(didTapHome), for: .touchUpInside)
         
@@ -63,11 +77,6 @@ class CoverViewController: UIViewController {
             
         ])
     }
-    
-    private func applyGradientToButton() {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = enterButton.bounds
-        gradientLayer.colors = [UIColor.systemOrange.cgColor, UIColor.systemPurple.cgColor]
-        enterButton.layer.insertSublayer(gradientLayer, at: 0)
-    }
 }
+
+// MARK: - Extension

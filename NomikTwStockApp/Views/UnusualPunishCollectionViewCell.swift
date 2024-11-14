@@ -11,6 +11,7 @@ class UnusualPunishCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "UnusualPunishCollectionViewCell"
     
+    // MARK: - UI Components
     private let unusualName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -29,12 +30,14 @@ class UnusualPunishCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    // MARK: - Functions
     public func configure(with name: String, day: String) {
         self.unusualName.text = name
         self.unusualDay.text = day
         self.setupUI()
     }
     
+    // MARK: - UI Setup
     private func setupUI() {
         self.backgroundColor = .systemBackground
         self.addSubview(unusualName)

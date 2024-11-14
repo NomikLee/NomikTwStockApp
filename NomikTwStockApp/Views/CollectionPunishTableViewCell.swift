@@ -13,12 +13,14 @@ protocol CollectionPushPunishDelegate: AnyObject {
 
 class CollectionPunishTableViewCell: UITableViewCell {
     
+    // MARK: - Variables
     static let identifier = "CollectionPunishTableViewCell"
     weak var delegate: CollectionPushPunishDelegate?
     
     private let viewModel = StockDataViewModels()
     var punishs: [Punish] = []
     
+    // MARK: - UI Components
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -29,6 +31,7 @@ class CollectionPunishTableViewCell: UITableViewCell {
         return collectionView
     }()
     
+    // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .systemFill
@@ -47,17 +50,16 @@ class CollectionPunishTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Functions
     public func configurePunish(with punish: [Punish]) {
         self.punishs = punish
         DispatchQueue.main.async {
             self.collectionView.reloadData()
         }
     }
-    
-    
-    
 }
 
+// MARK: - Extension
 extension CollectionPunishTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
