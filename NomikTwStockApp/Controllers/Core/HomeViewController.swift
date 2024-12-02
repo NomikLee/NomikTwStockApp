@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 
 class HomeViewController: UIViewController {
@@ -16,6 +17,7 @@ class HomeViewController: UIViewController {
     private var tapMoversDown: Bool = false
     private var tapVolume: Bool = false
     private var viewModel = StockDataViewModels()
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     private let homeTableView: UITableView = {
@@ -39,6 +41,8 @@ class HomeViewController: UIViewController {
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person.fill"), style: .plain, target: self, action: #selector(didTapPersonButton))
+        
         reloadViewData()
         startTimer()
     }
@@ -56,25 +60,32 @@ class HomeViewController: UIViewController {
     }
     
     private func reloadViewData() {
-        viewModel.GetMoversUp { _ in
-            DispatchQueue.main.async {
+        viewModel.GetMoversUp()
+        viewModel.$moversUPData.receive(on: DispatchQueue.main)
+            .sink { _ in
                 self.homeTableView.reloadData()
             }
-        }
+            .store(in: &cancellables)
         
-        viewModel.GetMoversDown { _ in
-            DispatchQueue.main.async {
+        viewModel.GetMoversDown()
+        viewModel.$moversDOWNData.receive(on: DispatchQueue.main)
+            .sink { _ in
                 self.homeTableView.reloadData()
             }
-        }
+            .store(in: &cancellables)
         
-        viewModel.GetVolumes { _ in
-            DispatchQueue.main.async {
+        viewModel.GetVolumes()
+        viewModel.$volumesData.receive(on: DispatchQueue.main)
+            .sink { _ in
                 self.homeTableView.reloadData()
             }
-        }
+            .store(in: &cancellables)
     }
     
+    // MARK: - Selectors
+    @objc func didTapPersonButton() {
+        print("TapPersonButton")
+    }
 }
 
 // MARK: - Extension
@@ -125,7 +136,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
             cell.configureNameData(with: viewModel.moversUPData?.data[indexPath.row].symbol ?? "", intoName: viewModel.moversUPData?.data[indexPath.row].name ?? "")
             cell.configureStockData(with: viewModel.moversUPData?.data[indexPath.row].closePrice ?? 0.0, intoChange: viewModel.moversUPData?.data[indexPath.row].change ?? 0.0, intoChangePercent: viewModel.moversUPData?.data[indexPath.row].changePercent ?? 0.0)
         }
-            
         return cell
     }
     
@@ -145,5 +155,4 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
-    
 }

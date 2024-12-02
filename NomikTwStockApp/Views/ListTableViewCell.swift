@@ -15,7 +15,7 @@ class ListTableViewCell: UITableViewCell {
     // MARK: - Variables
     private let padding: CGFloat = 10.0
     private var viewModel = StockUpDownViewModels()
-    private var subscriptions: Set<AnyCancellable> = []
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - UI Components
     private let symbolLabel: UILabel = { // symbolLabel顯示股票號碼
@@ -100,7 +100,7 @@ class ListTableViewCell: UITableViewCell {
         viewModel.$colorChange.sink { [weak self] color in
             self?.stockStatusLabel.backgroundColor = color
         }
-        .store(in: &subscriptions)
+        .store(in: &cancellables)
         
         // 訂閱 intoChangeValue 屬性變化
         viewModel.$intoChangeValue.sink { [weak self] percent in
@@ -117,7 +117,7 @@ class ListTableViewCell: UITableViewCell {
                 self?.stockChangePercentLabel.textColor = .white
             }
         }
-        .store(in: &subscriptions)
+        .store(in: &cancellables)
     }
     
     // MARK: - UI Setup

@@ -7,76 +7,45 @@
 
 import Foundation
 
-class StockDataViewModels {
+class StockDataViewModels: ObservableObject {
     
-    // 定義變量以保存 API 請求的結果
-    var moversUPData: MoversUPRespose?
-    var moversDOWNData: MoversDownRespose?
-    var volumesData: VolumesRespose?
-    var punishData: [Punish] = []
-    var notetransData: [Notetrans] = []
+    // MARK: - Variables
+    @Published var moversUPData: MoversUPRespose?
+    @Published var moversDOWNData: MoversDownRespose?
+    @Published var volumesData: VolumesRespose?
     
     // 獲取上漲排行股票數據
-    func GetMoversUp(completion: @escaping((Result<MoversUPRespose, Error>) -> Void)) {
+    func GetMoversUp() {
         APIService.shared.moversUpCall { [weak self] result in
             switch result {
-            case .success(let moversUpData):
-                self?.moversUPData = moversUpData
-                completion(.success(moversUpData))
+            case .success(let upDatas):
+                self?.moversUPData = upDatas
             case .failure(let error):
-                completion(.failure(error))
+                print(error.localizedDescription)
             }
         }
     }
     
     // 獲取下跌排行股票數據
-    func GetMoversDown(completion: @escaping((Result<MoversDownRespose, Error>) -> Void)) {
+    func GetMoversDown() {
         APIService.shared.moversDownCall { [weak self] result in
             switch result {
-            case .success(let moversDownData):
-                self?.moversDOWNData = moversDownData
-                completion(.success(moversDownData))
+            case .success(let downDatas):
+                self?.moversDOWNData = downDatas
             case .failure(let error):
-                completion(.failure(error))
+                print(error.localizedDescription)
             }
         }
     }
     
     // 獲取交易量排行數據
-    func GetVolumes(completion: @escaping((Result<VolumesRespose, Error>) -> Void)) {
+    func GetVolumes() {
         APIService.shared.volumesCall { [weak self] result in
             switch result {
-            case .success(let volumesData):
-                self?.volumesData = volumesData
-                completion(.success(volumesData))
+            case .success(let volumeDatas):
+                self?.volumesData = volumeDatas
             case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    // 獲取處置公告數據
-    func GetPunish(completion: @escaping((Result<[Punish], Error>) -> Void)) {
-        APIService.shared.punishCall { [weak self] result in
-            switch result {
-            case .success(let punishDataJoin):
-                self?.punishData = punishDataJoin
-                completion(.success(punishDataJoin))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    // 獲取注意公告數據
-    func GetNotetrans(completion: @escaping((Result<[Notetrans], Error>) -> Void)) {
-        APIService.shared.notetransCall { [weak self] result in
-            switch result {
-            case .success(let notetransDataJoin):
-                self?.notetransData = notetransDataJoin
-                completion(.success(notetransDataJoin))
-            case .failure(let error):
-                completion(.failure(error))
+                print(error.localizedDescription)
             }
         }
     }

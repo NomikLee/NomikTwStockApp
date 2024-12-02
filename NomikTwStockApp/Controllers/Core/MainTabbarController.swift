@@ -14,16 +14,16 @@ class MainTabbarController: UITabBarController {
         
         let homeVC = HomeViewController()
         let favoriteVC = FavoriteViewController()
-        let unusualVC = UnusualViewController()
+        let calculateVC = CalculateViewController()
         
         homeVC.title = "台股排行"
         favoriteVC.title = "自選股"
-        unusualVC.title = "注意處置股"
+        calculateVC.title = "複利計算機"
         
         
         let vc1 = UINavigationController(rootViewController: homeVC)
         let vc2 = UINavigationController(rootViewController: favoriteVC)
-        let vc3 = UINavigationController(rootViewController: unusualVC)
+        let vc3 = UINavigationController(rootViewController: calculateVC)
         
         // 設置大標題
         vc1.navigationBar.prefersLargeTitles = true
@@ -33,14 +33,19 @@ class MainTabbarController: UITabBarController {
         
         vc1.tabBarItem.image = UIImage(systemName: "house")
         vc2.tabBarItem.image = UIImage(systemName: "heart")
-        vc3.tabBarItem.image = UIImage(systemName: "exclamationmark.triangle")
+        vc3.tabBarItem.image = UIImage(systemName: "square.grid.3x3.middle.filled")
         
         vc1.tabBarItem.title = "主頁"
         vc2.tabBarItem.title = "自選股"
-        vc3.tabBarItem.title = "注意處置股"
+        vc3.tabBarItem.title = "複利計算機"
         
         tabBar.tintColor = .systemOrange
         
         setViewControllers([vc1, vc2, vc3], animated: true)
     }
+}
+
+#Preview {
+    let vc = MainTabbarController()
+    return vc
 }

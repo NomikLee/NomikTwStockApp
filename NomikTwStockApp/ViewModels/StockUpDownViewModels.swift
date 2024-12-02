@@ -8,10 +8,8 @@
 import Foundation
 import UIKit
 
-// final 防止該類被繼承
-final class StockUpDownViewModels: ObservableObject {
+class StockUpDownViewModels: ObservableObject {
     
-    // @Published 將變量標記為可觀察的，當變量改變時會通知視圖進行更新
     @Published var intoChangeValue: Double?
     @Published var colorChange: UIColor = .white
     

@@ -109,8 +109,6 @@ class TwiiHeaderView: UIView {
         addSubview(sectionStack)
         addSubview(viewBar)
         
-        lineChart.delegate = self
-        
         setData()
         startTimer()
         configureUI()
@@ -121,7 +119,6 @@ class TwiiHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 當視圖佈局改變時調整圖表的大小
     override func layoutSubviews() {
         super.layoutSubviews()
         lineChart.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height / 1.2)
@@ -132,7 +129,7 @@ class TwiiHeaderView: UIView {
         return String(format: "%.0f", value)
     }
     
-    // 啟動計時器，每5秒更新一次數據
+    // 每5秒更新一次數據
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
             self?.setData()
@@ -265,8 +262,3 @@ class TwiiHeaderView: UIView {
 }
 
 // MARK: - Extension
-extension TwiiHeaderView: ChartViewDelegate {
-    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
-        
-    }
-}

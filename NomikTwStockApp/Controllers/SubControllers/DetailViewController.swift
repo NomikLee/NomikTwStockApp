@@ -14,12 +14,11 @@ class DetailViewController: UIViewController {
     
     private var viewModel = StockDataViewModels()
     
+    // MARK: - Variables
     private var padding: CGFloat = 10.0
-    
+    private var checkFavoriteCode: [String] = []
     private let dataBase = Firestore.firestore()
     private lazy var doc = dataBase.document("Favorite/TwStocks")
-    
-    private var checkFavoriteCode: [String] = []
     
     private enum SectionTabs: String {
         case candle5K = "5K"
@@ -30,6 +29,20 @@ class DetailViewController: UIViewController {
         case candle月K = "月K"
     }
     
+    private var sectionTab: Int = 3 {
+        didSet {
+            for i in 0..<titleButtons.count {
+                UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+                    self.sectionStack.arrangedSubviews[i].tintColor = (self.sectionTab == i ? .label : .secondaryLabel)
+                    self.sectionStack.arrangedSubviews[i].backgroundColor = (self.sectionTab == i ? .systemPurple : .systemBackground)
+                    self.sectionStack.arrangedSubviews[i].layer.borderColor = (self.sectionTab == i ? UIColor.systemPurple.cgColor : UIColor.systemBackground.cgColor)
+                    self.sectionStack.arrangedSubviews[i].layer.masksToBounds = (self.sectionTab == i ? true : false)
+                }
+            }
+        }
+    }
+    
+    // MARK: - UI Components
     private let detailUIview: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -256,19 +269,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    private var sectionTab: Int = 0 {
-        didSet {
-            for i in 0..<titleButtons.count {
-                UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
-                    self.sectionStack.arrangedSubviews[i].tintColor = (self.sectionTab == i ? .label : .secondaryLabel)
-                    self.sectionStack.arrangedSubviews[i].backgroundColor = (self.sectionTab == i ? .systemPurple : .systemBackground)
-                    self.sectionStack.arrangedSubviews[i].layer.borderColor = (self.sectionTab == i ? UIColor.systemPurple.cgColor : UIColor.systemBackground.cgColor)
-                    self.sectionStack.arrangedSubviews[i].layer.masksToBounds = (self.sectionTab == i ? true : false)
-                }
-            }
-        }
-    }
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -304,36 +305,7 @@ class DetailViewController: UIViewController {
         }
     }
     
-    private func configureStarUI() {
-        
-        doc.getDocument { snapshot, error in
-            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
-        }
-        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
-        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
-        
-        checkFavorite { result in
-            if result.contains(where: {$0 == self.title}) {
-                self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-                self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
-            }
-        }
-    }
-    
-    @objc private func addFavoriteTap(){
-        doc.updateData([self.title : detailName.text ?? ""])
-        
-        self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
-    }
-    
-    @objc private func subFavoriteTap() {
-        doc.updateData([self.title : FieldValue.delete()])
-        
-        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
-        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
-    }
-    
+    // MARK: - Functions
     private func checkFavorite(completion: @escaping([String]) -> Void) {
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return }
@@ -461,6 +433,21 @@ class DetailViewController: UIViewController {
         }
     }
     
+    // MARK: - Selectors
+    @objc private func addFavoriteTap(){
+        doc.updateData([self.title : detailName.text ?? ""])
+        
+        self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
+    }
+    
+    @objc private func subFavoriteTap() {
+        doc.updateData([self.title : FieldValue.delete()])
+        
+        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
+    }
+    
     @objc private func didTabTap(_ buttonTab: UIButton) {
         guard let label = buttonTab.titleLabel?.text else { return }
         
@@ -484,7 +471,23 @@ class DetailViewController: UIViewController {
             sectionTab = 5
             setCandleData(to: "M")
         default:
-            sectionTab = 0
+            sectionTab = 3
+        }
+    }
+    
+    // MARK: - UI Setup
+    private func configureStarUI() {
+        doc.getDocument { snapshot, error in
+            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
+        }
+        favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
+        favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)
+        
+        checkFavorite { result in
+            if result.contains(where: {$0 == self.title}) {
+                self.favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                self.favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
+            }
         }
     }
     
@@ -509,7 +512,6 @@ class DetailViewController: UIViewController {
         }
         
         NSLayoutConstraint.activate([
-            
             detailUIview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: padding),
             detailUIview.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: padding),
             detailUIview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
@@ -587,7 +589,6 @@ class DetailViewController: UIViewController {
             
             favoritePushButton.bottomAnchor.constraint(equalTo: detailDataUIview.bottomAnchor, constant: -20),
             favoritePushButton.trailingAnchor.constraint(equalTo: detailDataUIview.trailingAnchor, constant: -20)
-            
         ])
     }
 }

@@ -30,7 +30,6 @@ class SearchViewController: UIViewController {
         super.viewDidLayoutSubviews()
         searchTableView.frame = view.bounds
     }
-
 }
 
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
