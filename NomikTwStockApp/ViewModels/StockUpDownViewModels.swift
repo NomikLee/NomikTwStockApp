@@ -9,16 +9,13 @@ import Foundation
 import UIKit
 
 class StockUpDownViewModels: ObservableObject {
-    
     @Published var intoChangeValue: Double?
     @Published var colorChange: UIColor = .white
     
-    // 根據股票價格變化返回相應的狀態字串
+    // 判斷價格變化並設置相應的顏色和狀態
     func stockPriceChange() -> String {
-        // 檢查 intoChangeValue 是否為 nil，若為 nil 則返回 "無資料"
         guard let intoChangeValue = intoChangeValue else { return "無資料" }
         
-        // 判斷價格變化幅度並設置相應的顏色和狀態
         if intoChangeValue > 9.8 {
             colorChange = .systemRed
             return "漲停"

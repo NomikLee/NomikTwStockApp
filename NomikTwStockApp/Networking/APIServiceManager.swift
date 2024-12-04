@@ -1,5 +1,5 @@
 //
-//  APIService.swift
+//  APIServiceManager.swift
 //  NomikTwStockApp
 //
 //  Created by Pinocchio on 2024/5/19.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-class APIService {
+class APIServiceManager {
     
-    static let shared = APIService()
+    static let shared = APIServiceManager()
     
     // TWII API 請求
     func twiiCall(completion: @escaping ((Result<TwiiRespose, Error>) -> Void)) {
@@ -112,7 +112,6 @@ class APIService {
                 completion(.failure(error))
             }
         }
-        
         tast.resume()
     }
     

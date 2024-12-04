@@ -11,10 +11,10 @@ import Combine
 class ListTableViewCell: UITableViewCell {
     
     static let identifier = "ListTableViewCell"
+    private var viewModel = StockUpDownViewModels()
     
     // MARK: - Variables
     private let padding: CGFloat = 10.0
-    private var viewModel = StockUpDownViewModels()
     private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - UI Components
@@ -96,13 +96,12 @@ class ListTableViewCell: UITableViewCell {
         viewModel.intoChangeValue = changeValue
         self.stockStatusLabel.text = viewModel.stockPriceChange()
         
-        // 訂閱 colorChange 屬性變化
+        // 訂閱漲跌顏色變化
         viewModel.$colorChange.sink { [weak self] color in
             self?.stockStatusLabel.backgroundColor = color
         }
         .store(in: &cancellables)
         
-        // 訂閱 intoChangeValue 屬性變化
         viewModel.$intoChangeValue.sink { [weak self] percent in
             guard let percent = percent else { return }
             switch percent {
@@ -123,29 +122,24 @@ class ListTableViewCell: UITableViewCell {
     // MARK: - UI Setup
     private func configureUI() {
         NSLayoutConstraint.activate([
-            // 配置 nameLabel 的佈局
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             nameLabel.heightAnchor.constraint(equalToConstant: 40),
             
-            // 配置 symbolLabel 的佈局
             symbolLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             symbolLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
             symbolLabel.heightAnchor.constraint(equalToConstant: 20),
             
-            // 配置 stockPriceLabel 的佈局
             stockPriceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
             stockPriceLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
             stockPriceLabel.widthAnchor.constraint(equalToConstant: 60),
             stockPriceLabel.heightAnchor.constraint(equalToConstant: 30),
             
-            // 配置 stockChangePercentLabel 的佈局
             stockChangePercentLabel.trailingAnchor.constraint(equalTo: stockPriceLabel.trailingAnchor),
             stockChangePercentLabel.topAnchor.constraint(equalTo: stockPriceLabel.bottomAnchor),
             stockChangePercentLabel.widthAnchor.constraint(equalToConstant: 120),
             stockChangePercentLabel.heightAnchor.constraint(equalToConstant: 30),
             
-            // 配置 stockStatusLabel 的佈局
             stockStatusLabel.trailingAnchor.constraint(equalTo: stockChangePercentLabel.leadingAnchor),
             stockStatusLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             stockStatusLabel.widthAnchor.constraint(equalToConstant: 80),

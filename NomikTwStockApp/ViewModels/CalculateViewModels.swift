@@ -9,9 +9,9 @@ import Foundation
 import Combine
 
 class CalculateViewModels: ObservableObject {
-    
     @Published var totalCalculateData: [CalculateModels] = []
     
+    //計算複利的數據
     func calculateTotalValue(initialFundValue: String, newInvestmentValue: String, annualizedRateValue: String, investmentYearStepValue: String) {
         guard let initialFundValue = Double(initialFundValue),
         let newInvestmentValue = Double(newInvestmentValue),

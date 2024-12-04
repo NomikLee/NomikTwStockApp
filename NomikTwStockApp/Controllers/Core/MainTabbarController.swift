@@ -20,7 +20,6 @@ class MainTabbarController: UITabBarController {
         favoriteVC.title = "自選股"
         calculateVC.title = "複利計算機"
         
-        
         let vc1 = UINavigationController(rootViewController: homeVC)
         let vc2 = UINavigationController(rootViewController: favoriteVC)
         let vc3 = UINavigationController(rootViewController: calculateVC)
@@ -30,7 +29,6 @@ class MainTabbarController: UITabBarController {
         vc2.navigationBar.prefersLargeTitles = true
         vc3.navigationBar.prefersLargeTitles = true
 
-        
         vc1.tabBarItem.image = UIImage(systemName: "house")
         vc2.tabBarItem.image = UIImage(systemName: "heart")
         vc3.tabBarItem.image = UIImage(systemName: "square.grid.3x3.middle.filled")
@@ -43,9 +41,4 @@ class MainTabbarController: UITabBarController {
         
         setViewControllers([vc1, vc2, vc3], animated: true)
     }
-}
-
-#Preview {
-    let vc = MainTabbarController()
-    return vc
 }

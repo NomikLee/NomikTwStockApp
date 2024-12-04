@@ -107,8 +107,6 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    // MARK: - Selectors
-    
     // MARK: - UI Setup
     private func configureUI() {
         NSLayoutConstraint.activate([
@@ -129,6 +127,4 @@ class FavoriteCollectionViewCell: UICollectionViewCell {
         ])
     }
 }
-
-// MARK: - Extension
     

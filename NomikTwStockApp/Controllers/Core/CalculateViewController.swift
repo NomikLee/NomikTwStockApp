@@ -11,17 +11,17 @@ import Combine
 
 class CalculateViewController: UIViewController {
     
-    // MARK: - Variables
-    let padding: CGFloat = 10
-    
     private let viewModel = CalculateViewModels()
+    
+    // MARK: - Variables
+    private let padding: CGFloat = 10
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     private let initialFundTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "初始資金"
+        label.text = "初始資金(元)"
         label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
@@ -43,7 +43,7 @@ class CalculateViewController: UIViewController {
     private let newInvestmentTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "每年新增資金"
+        label.text = "每年新增資金(元)"
         label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
@@ -65,7 +65,7 @@ class CalculateViewController: UIViewController {
     private let annualizedRateTitle: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "年收益率"
+        label.text = "年收益率(%)"
         label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
@@ -196,6 +196,7 @@ class CalculateViewController: UIViewController {
     //計算數值
     @objc func calculateValue() {
         viewModel.calculateTotalValue(initialFundValue: initialFund.text ?? "0.0", newInvestmentValue: newInvestment.text ?? "0.0", annualizedRateValue: annualizedRate.text ?? "0.0", investmentYearStepValue: investmentYearStepText.text ?? "1")
+        view.endEditing(true)
     }
     
     // MARK: - UI Setup

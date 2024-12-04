@@ -9,14 +9,13 @@ import UIKit
 
 class FavoriteViewController: UIViewController {
     
+    private var viewModel = StockDataViewModels()
+    
     // MARK: - Variables
     private let searchVC = UISearchController(searchResultsController: SearchViewController())
-    
     private let dataBase = Firestore.firestore()
     private lazy var doc = dataBase.document("Favorite/TwStocks")
     private var favoriteCode: [String] = []
-    
-    private var viewModel = StockDataViewModels()
     
     // MARK: - UI Components
     private let favoriteCollectionView: UICollectionView = {
@@ -99,7 +98,6 @@ extension FavoriteViewController: UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let DetailVC = DetailViewController()
         DetailVC.title = favoriteCode[indexPath.row]
-        
         navigationController?.pushViewController(DetailVC, animated: true)
     }
 }
@@ -120,7 +118,6 @@ extension FavoriteViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
-    
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchBarText = searchController.searchBar.text, let resultsController = searchController.searchResultsController as? SearchViewController else {
             return
@@ -140,7 +137,6 @@ extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
                 }
             }
         }
-        
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {}

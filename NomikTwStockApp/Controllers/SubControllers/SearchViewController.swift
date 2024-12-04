@@ -9,18 +9,21 @@ import UIKit
 
 class SearchViewController: UIViewController {
     
+    // MARK: - Variables
     var searchResults: [TickersListDatas] = []
     
+    // MARK: - UI Components
     public let searchTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.separatorStyle = .none
         return tableView
     }()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(searchTableView)
-        
         
         searchTableView.delegate = self
         searchTableView.dataSource = self
@@ -32,6 +35,7 @@ class SearchViewController: UIViewController {
     }
 }
 
+// MARK: - Extension
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return searchResults.count
@@ -49,9 +53,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailVC = DetailViewController()
         detailVC.title = "\(self.searchResults[indexPath.row].symbol ?? "無資料")"
-        let navController = UINavigationController(rootViewController: detailVC)
-        self.present(navController, animated: true, completion: nil)
+        let detailNavVC = UINavigationController(rootViewController: detailVC)
+        self.present(detailNavVC, animated: true, completion: nil)
     }
-    
-    
 }

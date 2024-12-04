@@ -8,15 +8,13 @@
 import Foundation
 
 class StockDataViewModels: ObservableObject {
-    
-    // MARK: - Variables
     @Published var moversUPData: MoversUPRespose?
     @Published var moversDOWNData: MoversDownRespose?
     @Published var volumesData: VolumesRespose?
     
     // 獲取上漲排行股票數據
     func GetMoversUp() {
-        APIService.shared.moversUpCall { [weak self] result in
+        APIServiceManager.shared.moversUpCall { [weak self] result in
             switch result {
             case .success(let upDatas):
                 self?.moversUPData = upDatas
@@ -28,7 +26,7 @@ class StockDataViewModels: ObservableObject {
     
     // 獲取下跌排行股票數據
     func GetMoversDown() {
-        APIService.shared.moversDownCall { [weak self] result in
+        APIServiceManager.shared.moversDownCall { [weak self] result in
             switch result {
             case .success(let downDatas):
                 self?.moversDOWNData = downDatas
@@ -40,7 +38,7 @@ class StockDataViewModels: ObservableObject {
     
     // 獲取交易量排行數據
     func GetVolumes() {
-        APIService.shared.volumesCall { [weak self] result in
+        APIServiceManager.shared.volumesCall { [weak self] result in
             switch result {
             case .success(let volumeDatas):
                 self?.volumesData = volumeDatas
@@ -52,7 +50,7 @@ class StockDataViewModels: ObservableObject {
     
     // 獲取個股股票數據
     func GetQuoteSingle(symbolCode: String, completion: @escaping((Result<QuoteSingleModels, Error>) -> Void)) {
-        APIService.shared.quoteSingleCall(symbolCode: symbolCode) { [weak self] result in
+        APIServiceManager.shared.quoteSingleCall(symbolCode: symbolCode) { [weak self] result in
             switch result {
             case .success(let quoteSingle):
                 completion(.success(quoteSingle))
@@ -64,7 +62,7 @@ class StockDataViewModels: ObservableObject {
     
     // 獲取殖利率 本益比 淨值比數據
     func GetPeDyPbCall(completion: @escaping((Result<[PeDyPbModels], Error>) -> Void)) {
-        APIService.shared.peDyPbCall { [weak self] result in
+        APIServiceManager.shared.peDyPbCall { [weak self] result in
             switch result {
             case .success(let peDyPbData):
                 completion(.success(peDyPbData))
@@ -76,7 +74,7 @@ class StockDataViewModels: ObservableObject {
     
     // 獲取k棒數據
     func GetCandle(symbolCode: String, timeframe: String, completion: @escaping((Result<CandleRespose, Error>) -> Void)) {
-        APIService.shared.candleCall(symbolCode: symbolCode, timeframe: timeframe) { [weak self] result in
+        APIServiceManager.shared.candleCall(symbolCode: symbolCode, timeframe: timeframe) { [weak self] result in
             switch result {
             case .success(let candleDatas):
                 completion(.success(candleDatas))
@@ -88,7 +86,7 @@ class StockDataViewModels: ObservableObject {
     
     //獲取搜尋欄數據
     func GetTickers(completion: @escaping((Result<TickersResponse, Error>) -> Void)) {
-        APIService.shared.tickersCall { [weak self] result in
+        APIServiceManager.shared.tickersCall { [weak self] result in
             switch result {
             case .success(let tickersCallData):
                 completion(.success(tickersCallData))
@@ -97,6 +95,5 @@ class StockDataViewModels: ObservableObject {
             }
         }
     }
-    
 }
 

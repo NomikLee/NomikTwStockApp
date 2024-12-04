@@ -15,20 +15,20 @@ protocol TwiiHeaderViewDelegate: AnyObject {
     func twiiHeaderViewDidTapVolume()
 }
 
+private enum SectionTabs: String {
+    case moversUP = "台股上漲排行"
+    case moversDown = "台股下跌排行"
+    case volume = "成交量排行"
+}
+
 class TwiiHeaderView: UIView {
     
     // MARK: - Variables
     weak var delegate: TwiiHeaderViewDelegate?
     var timer: Timer?
     
-    private var leadingAnchors: [NSLayoutConstraint] = [] // 定義leading和trailing佈局約束
+    private var leadingAnchors: [NSLayoutConstraint] = []
     private var trailingAnchors: [NSLayoutConstraint] = []
-    
-    private enum SectionTabs: String {
-        case moversUP = "台股上漲排行"
-        case moversDown = "台股下跌排行"
-        case volume = "成交量排行"
-    }
     
     private var sectionTab: Int = 0 {
         didSet {
@@ -41,7 +41,7 @@ class TwiiHeaderView: UIView {
                 }
             }
             
-            // 根據選中的標籤索引觸發相應的代理方法
+            // 根據選中的標籤索引觸發相應的delegate
             switch sectionTab {
             case 0:
                 delegate?.twiiHeaderViewDidTapMoversUP()
@@ -140,7 +140,7 @@ class TwiiHeaderView: UIView {
     private func setData() {
         var entrieData: [ChartDataEntry] = []
         
-        APIService.shared.twiiCall { result in
+        APIServiceManager.shared.twiiCall { result in
             switch result {
             case .success(let twiiDataCall):
                 let centerValue: Double = twiiDataCall.data.first?.open ?? 0.0
@@ -192,7 +192,6 @@ class TwiiHeaderView: UIView {
                     } else {
                         set1.drawFilledEnabled = false
                     }
-                    
                     
                     self.lineChart.leftAxis.axisMinimum = centerValue - yAxisRange / 2
                     self.lineChart.leftAxis.axisMaximum = centerValue + yAxisRange / 2

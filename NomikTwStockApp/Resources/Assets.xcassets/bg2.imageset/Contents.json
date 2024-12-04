@@ -1,11 +1,11 @@
 {
   "images" : [
     {
+      "filename" : "bg2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "17_Location Error@2x＿1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

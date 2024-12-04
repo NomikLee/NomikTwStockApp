@@ -13,7 +13,6 @@ struct Constants {
 }
 
 enum Http {
-    
     enum Headers: String {
         case apiKey = "X-API-KEY"
     }

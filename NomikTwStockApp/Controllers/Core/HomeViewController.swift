@@ -8,21 +8,22 @@
 import UIKit
 import Combine
 
-
 class HomeViewController: UIViewController {
     
+    private var viewModel = StockDataViewModels()
+    
     // MARK: - Variables
-    var timer: Timer?
+    private var timer: Timer?
     private var tapMoversUP: Bool = false
     private var tapMoversDown: Bool = false
     private var tapVolume: Bool = false
-    private var viewModel = StockDataViewModels()
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - UI Components
     private let homeTableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ListTableViewCell.self, forCellReuseIdentifier: ListTableViewCell.identifier)
+        tableView.separatorStyle = .none
         return tableView
     }()
 
@@ -36,12 +37,10 @@ class HomeViewController: UIViewController {
         homeTableView.delegate = self
         homeTableView.dataSource = self
         
-        // 初始並設置twiiHeaderView其框架
+        // 設置TableView的Header
         let twiiHeaderView = TwiiHeaderView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 300))
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "person.fill"), style: .plain, target: self, action: #selector(didTapPersonButton))
         
         reloadViewData()
         startTimer()
@@ -81,16 +80,10 @@ class HomeViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
-    
-    // MARK: - Selectors
-    @objc func didTapPersonButton() {
-        print("TapPersonButton")
-    }
 }
 
 // MARK: - Extension
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHeaderViewDelegate {
-    
     func twiiHeaderViewDidTapMoversUP() {
         tapMoversUP = true
         tapMoversDown = false
@@ -111,7 +104,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
         tapVolume = true
         self.homeTableView.reloadData()
     }
-    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 50
