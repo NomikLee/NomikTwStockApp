@@ -47,6 +47,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         if let searchSymbol = searchResults[indexPath.row].symbol, let searchName = searchResults[indexPath.row].name {
             cell.textLabel?.text = "\(searchSymbol) \(searchName)"
         }
+        
         return cell
     }
     

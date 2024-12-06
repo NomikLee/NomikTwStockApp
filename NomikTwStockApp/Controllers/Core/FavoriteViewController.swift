@@ -47,8 +47,8 @@ class FavoriteViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        readData { _ in
-            self.favoriteCollectionView.reloadData()
+        readData { [weak self] _ in
+            self?.favoriteCollectionView.reloadData()
         }
     }
     
@@ -122,19 +122,21 @@ extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
         guard let searchBarText = searchController.searchBar.text, let resultsController = searchController.searchResultsController as? SearchViewController else {
             return
         }
-        DispatchQueue.main.async {
-            self.viewModel.GetTickers { result in
-                switch result {
-                case .success(let searchDatas):
-                    if let data = searchDatas.data {
-                        if !searchBarText.isEmpty {
-                            resultsController.searchResults = data.filter { $0.name == searchBarText || $0.symbol == searchBarText }
-                        }
+        
+        viewModel.GetTickers { [weak self] result in
+            switch result {
+            case .success(let searchDatas):
+                if let data = searchDatas.data {
+                    if !searchBarText.isEmpty {
+                        resultsController.searchResults = data.filter { $0.name == searchBarText || $0.symbol == searchBarText }
                     }
-                    resultsController.searchTableView.reloadData()
-                case .failure(let error):
-                    print(error.localizedDescription)
                 }
+                
+                DispatchQueue.main.async {
+                    resultsController.searchTableView.reloadData()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }

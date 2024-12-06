@@ -23,10 +23,9 @@ private enum SectionTabs: String {
 
 class TwiiHeaderView: UIView {
     
-    // MARK: - Variables
     weak var delegate: TwiiHeaderViewDelegate?
-    var timer: Timer?
     
+    // MARK: - Variables
     private var leadingAnchors: [NSLayoutConstraint] = []
     private var trailingAnchors: [NSLayoutConstraint] = []
     
@@ -41,7 +40,6 @@ class TwiiHeaderView: UIView {
                 }
             }
             
-            // 根據選中的標籤索引觸發相應的delegate
             switch sectionTab {
             case 0:
                 delegate?.twiiHeaderViewDidTapMoversUP()
@@ -81,31 +79,37 @@ class TwiiHeaderView: UIView {
 
     private var lineChart: LineChartView = {
         let chartView = LineChartView()
-        chartView.rightAxis.enabled = false
         chartView.animate(xAxisDuration: 2.5)
-                
-        let leftAxis = chartView.leftAxis
-        leftAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        leftAxis.setLabelCount(10, force: false)
-        leftAxis.labelPosition = .outsideChart
-        leftAxis.drawGridLinesEnabled = false
+        chartView.doubleTapToZoomEnabled = false
         
-        let xAxis = chartView.xAxis
-        xAxis.labelPosition = .bottomInside
-        xAxis.labelFont = UIFont(name: "HelveticaNeue-Light", size: 10)!
-        xAxis.axisMinimum = 0
-        xAxis.axisMaximum = 270
-        xAxis.granularity = 1
-        xAxis.drawGridLinesEnabled = false
-        xAxis.enabled = false
+        chartView.leftAxis.enabled = false
+        chartView.rightAxis.enabled = true
+        chartView.rightAxis.drawGridLinesEnabled = false
+        
+        chartView.xAxis.labelPosition = .bottom
+        chartView.xAxis.axisRange = 271
+        chartView.xAxis.granularity = 1
+        chartView.xAxis.drawGridLinesEnabled = false
+        chartView.xAxis.enabled = false
         
         return chartView
+    }()
+    
+    private let twiiLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        label.textColor = .systemOrange
+        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        return label
     }()
     
     // MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(lineChart)
+        lineChart.addSubview(twiiLabel)
         addSubview(sectionStack)
         addSubview(viewBar)
         
@@ -113,6 +117,8 @@ class TwiiHeaderView: UIView {
         startTimer()
         configureUI()
         configureStackButton()
+        
+        lineChart.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -125,13 +131,8 @@ class TwiiHeaderView: UIView {
     }
     
     // MARK: - Functions
-    private func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-        return String(format: "%.0f", value)
-    }
-    
-    // 每5秒更新一次數據
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
             self?.setData()
         })
     }
@@ -144,31 +145,16 @@ class TwiiHeaderView: UIView {
             switch result {
             case .success(let twiiDataCall):
                 let centerValue: Double = twiiDataCall.data.first?.open ?? 0.0
-                let yAxisRange: Double = 1000
                 
                 let limitLine = ChartLimitLine(limit: centerValue, label: "開盤價\(centerValue)")
                 limitLine.lineWidth = 1
                 limitLine.lineColor = .systemYellow
                 
-                var temp = 0.0
-                for twiiDatas in twiiDataCall.data {
-                    let dateString = twiiDatas.date
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
-
-                    if let date = dateFormatter.date(from: dateString) {
-                        dateFormatter.dateFormat = "HH:mm"
-                        let time = dateFormatter.string(from: date)
-                        let reString = time.replacingOccurrences(of: ":", with: ".")
-                        
-                        if reString == "09.00" {
-                            entrieData.append(ChartDataEntry(x: temp, y: Double(twiiDatas.open)))
-                        } else {
-                            temp += 1
-                            entrieData.append(ChartDataEntry(x: temp, y: Double(twiiDatas.close)))
-                        }
+                for i in 0..<twiiDataCall.data.count {
+                    if i == 0 {
+                        entrieData.append(ChartDataEntry(x: Double(i), y: Double(twiiDataCall.data[i].open)))
                     } else {
-                        print("日期字符串格式錯誤")
+                        entrieData.append(ChartDataEntry(x: Double(i), y: Double(twiiDataCall.data[i].close)))
                     }
                 }
                 
@@ -193,21 +179,19 @@ class TwiiHeaderView: UIView {
                         set1.drawFilledEnabled = false
                     }
                     
-                    self.lineChart.leftAxis.axisMinimum = centerValue - yAxisRange / 2
-                    self.lineChart.leftAxis.axisMaximum = centerValue + yAxisRange / 2
-                    self.lineChart.leftAxis.addLimitLine(limitLine)
+                    self.lineChart.rightAxis.addLimitLine(limitLine)
             
                     let data = LineChartData(dataSet: set1)
                     data.setDrawValues(false)
                     self.lineChart.data = data
+                    self.lineChart.notifyDataSetChanged()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
     }
-    
-    // 配置標籤按鈕
+
     private func configureStackButton() {
         for (i, button) in sectionStack.arrangedSubviews.enumerated() {
             guard let button = button as? UIButton else { return }
@@ -217,7 +201,6 @@ class TwiiHeaderView: UIView {
             } else {
                 button.tintColor = .secondaryLabel
             }
-            
             button.addTarget(self, action: #selector(didTapTab(_:)), for: .touchUpInside)
         }
     }
@@ -247,6 +230,11 @@ class TwiiHeaderView: UIView {
         }
         
         NSLayoutConstraint.activate([
+            twiiLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            twiiLabel.trailingAnchor.constraint(equalTo: centerXAnchor),
+            twiiLabel.heightAnchor.constraint(equalToConstant: 25),
+            twiiLabel.topAnchor.constraint(equalTo: topAnchor),
+            
             sectionStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             sectionStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             sectionStack.topAnchor.constraint(equalTo: lineChart.bottomAnchor),
@@ -261,3 +249,13 @@ class TwiiHeaderView: UIView {
 }
 
 // MARK: - Extension
+extension TwiiHeaderView: ChartViewDelegate {
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        let twiiValue = entry.y
+        twiiLabel.text = "Price \(twiiValue)"
+    }
+    
+    func chartValueNothingSelected(_ chartView: ChartViewBase) {
+        twiiLabel.text = ""
+    }
+}

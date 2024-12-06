@@ -40,6 +40,8 @@ class ListTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.backgroundColor = .systemBackground
+        label.textColor = .white
         label.layer.cornerRadius = 10
         label.layer.borderWidth = 3
         label.clipsToBounds = true

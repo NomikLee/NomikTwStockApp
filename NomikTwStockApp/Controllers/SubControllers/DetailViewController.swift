@@ -8,6 +8,7 @@
 import UIKit
 import DGCharts
 import FirebaseFirestore
+import Combine
 
 private enum SectionTabs: String {
     case candle5K = "5K"
@@ -25,6 +26,7 @@ class DetailViewController: UIViewController {
     // MARK: - Variables
     private var padding: CGFloat = 10.0
     private var checkFavoriteCode: [String] = []
+    private var candleValue: [CandleRespose] = []
     private let dataBase = Firestore.firestore()
     private lazy var doc = dataBase.document("Favorite/TwStocks")
     
@@ -53,7 +55,7 @@ class DetailViewController: UIViewController {
         return view
     }()
     
-    private let detailUiMiniview: UIView = {
+    private let detailUiMiniView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
@@ -188,7 +190,7 @@ class DetailViewController: UIViewController {
         let label = UILabel()
         label.text = titles
         label.textAlignment = .left
-        label.textColor = .white
+        label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         return label
     }
@@ -206,7 +208,7 @@ class DetailViewController: UIViewController {
         let label = UILabel()
         label.text = titles
         label.textAlignment = .left
-        label.textColor = .white
+        label.textColor = .secondaryLabel
         label.font = .systemFont(ofSize: 15, weight: .semibold)
         return label
     }
@@ -264,6 +266,16 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
+    private let candlePriceLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.textColor = .systemOrange
+        return label
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -271,13 +283,14 @@ class DetailViewController: UIViewController {
         view.backgroundColor = UIColor(white: 0, alpha: 1)
         view.addSubview(detailUIview)
         detailUIview.addSubview(detailName)
-        detailUIview.addSubview(detailUiMiniview)
-        detailUiMiniview.addSubview(detailPrice)
-        detailUiMiniview.addSubview(detailChange)
+        detailUIview.addSubview(detailUiMiniView)
+        detailUiMiniView.addSubview(detailPrice)
+        detailUiMiniView.addSubview(detailChange)
         
         view.addSubview(candleStickChartView)
         view.addSubview(sectionStack)
         view.addSubview(detailDataUIview)
+        candleStickChartView.addSubview(candlePriceLabel)
         detailDataUIview.addSubview(detailHorizontalLine)
         detailDataUIview.addSubview(detailStraightLine)
         detailDataUIview.addSubview(detailNameStack)
@@ -295,6 +308,8 @@ class DetailViewController: UIViewController {
         setCandleData(to: "D")
         configureDetailData()
         
+        candleStickChartView.delegate = self
+        
         Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
             self?.configureDetailData()
         }
@@ -304,6 +319,7 @@ class DetailViewController: UIViewController {
     private func checkFavorite(completion: @escaping([String]) -> Void) {
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return }
+            
             DispatchQueue.main.async {
                 let keysCollection: Dictionary<String, Any>.Keys = data.keys
                 self.checkFavoriteCode = Array(keysCollection)
@@ -370,16 +386,17 @@ class DetailViewController: UIViewController {
     func setCandleData(to dataTime: String) {
         
         var yCandleValues: [CandleChartDataEntry] = []
-        var xLabels: [String] = []
+        candleValue = []
         
-        viewModel.GetCandle(symbolCode: self.title!, timeframe: dataTime) { [weak self] result in
+        viewModel.GetCandle(symbolCode: self.title ?? "無資料", timeframe: dataTime) { [weak self] result in
             switch result {
             case .success(let candles):
                 let temp = candles.data.count - 1
                 
+                self?.candleValue.append(candles)
+                
                 for i in (0..<candles.data.count).reversed(){
                     yCandleValues.append(CandleChartDataEntry(x: Double(temp - i), shadowH: candles.data[i].high, shadowL: candles.data[i].low, open: candles.data[i].open, close: candles.data[i].close))
-                    xLabels.append(candles.data[i].date)
                 }
                 
                 let setCandle = CandleChartDataSet(entries: yCandleValues, label: "")
@@ -418,7 +435,6 @@ class DetailViewController: UIViewController {
                 button.backgroundColor = .systemBackground
                 button.tintColor = .secondaryLabel
             }
-            
             button.addTarget(self, action: #selector(didTabTap), for: .touchUpInside)
         }
     }
@@ -503,11 +519,11 @@ class DetailViewController: UIViewController {
             detailUIview.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -padding),
             detailUIview.heightAnchor.constraint(equalToConstant: 90),
             
-            detailUiMiniview.topAnchor.constraint(equalTo: detailUIview.topAnchor, constant: 2),
-            detailUiMiniview.bottomAnchor.constraint(equalTo: detailUIview.bottomAnchor, constant: -2),
-            detailUiMiniview.leadingAnchor.constraint(equalTo: detailUIview.centerXAnchor, constant: 50),
-            detailUiMiniview.trailingAnchor.constraint(equalTo: detailUIview.trailingAnchor, constant: -2),
-            detailUiMiniview.heightAnchor.constraint(equalToConstant: 90),
+            detailUiMiniView.topAnchor.constraint(equalTo: detailUIview.topAnchor, constant: 2),
+            detailUiMiniView.bottomAnchor.constraint(equalTo: detailUIview.bottomAnchor, constant: -2),
+            detailUiMiniView.leadingAnchor.constraint(equalTo: detailUIview.centerXAnchor, constant: 40),
+            detailUiMiniView.trailingAnchor.constraint(equalTo: detailUIview.trailingAnchor, constant: -2),
+            detailUiMiniView.heightAnchor.constraint(equalToConstant: 90),
             
             detailName.centerYAnchor.constraint(equalTo: detailUIview.centerYAnchor),
             detailName.leadingAnchor.constraint(equalTo: detailUIview.leadingAnchor, constant: 20),
@@ -522,6 +538,11 @@ class DetailViewController: UIViewController {
             candleStickChartView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             candleStickChartView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             candleStickChartView.bottomAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            candlePriceLabel.leadingAnchor.constraint(equalTo: candleStickChartView.leadingAnchor),
+            candlePriceLabel.bottomAnchor.constraint(equalTo: candleStickChartView.bottomAnchor),
+            candlePriceLabel.trailingAnchor.constraint(equalTo: candleStickChartView.trailingAnchor),
+            candlePriceLabel.heightAnchor.constraint(equalToConstant: 30),
             
             sectionStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             sectionStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
@@ -578,3 +599,17 @@ class DetailViewController: UIViewController {
         ])
     }
 }
+// MARK: - Extension
+extension DetailViewController: ChartViewDelegate {
+    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        let xSel = entry.x + 1.0 //十字選擇時x軸位置
+        let candleValueCount = candleValue[0].data.count //candleValue資料的數量
+        
+        candlePriceLabel.text = " 高 \(candleValue[0].data[candleValueCount - Int(xSel)].high) 低 \(candleValue[0].data[candleValueCount - Int(xSel)].low) 開 \(candleValue[0].data[candleValueCount - Int(xSel)].open) 關 \(candleValue[0].data[candleValueCount - Int(xSel)].close)"
+    }
+    
+    func chartValueNothingSelected(_ chartView: ChartViewBase) {
+        candlePriceLabel.text = ""
+    }
+}
+

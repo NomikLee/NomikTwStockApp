@@ -8,17 +8,20 @@
 import Foundation
 import Combine
 
+enum enterStringError: Error {
+    case pleaseEnterNumber
+}
+
 class CalculateViewModels: ObservableObject {
     @Published var totalCalculateData: [CalculateModels] = []
     
     //計算複利的數據
-    func calculateTotalValue(initialFundValue: String, newInvestmentValue: String, annualizedRateValue: String, investmentYearStepValue: String) {
+    func calculateTotalValue(initialFundValue: String, newInvestmentValue: String, annualizedRateValue: String, investmentYearStepValue: String) throws {
         guard let initialFundValue = Double(initialFundValue),
         let newInvestmentValue = Double(newInvestmentValue),
         let annualizedRateValue = Double(annualizedRateValue),
               let investmentYearStepValue = Int(investmentYearStepValue) else {
-            print("error")
-            return
+            throw enterStringError.pleaseEnterNumber
         }
         
         totalCalculateData = [] //清空數值

@@ -155,6 +155,7 @@ class CalculateViewController: UIViewController {
         configureUI()
         stepValue()
         setChartData()
+        setupCancelKeyboard()
         
         calculateButton.addTarget(self, action: #selector(calculateValue), for: .touchUpInside)
     }
@@ -172,20 +173,25 @@ class CalculateViewController: UIViewController {
                 
                 // 設置數據集
                 let dataSet = LineChartDataSet(entries: dataEntries, label: "每年複利數據")
-                dataSet.colors = [.systemOrange] // 線條顏色
+                dataSet.colors = [.systemIndigo] // 線條顏色
                 dataSet.circleColors = [.systemBlue] // 圓點顏色
                 dataSet.circleRadius = 3 // 圓點大小
                 dataSet.lineWidth = 2 // 線條寬度
-                dataSet.valueColors = [.white] // 資料標籤顏色
+                dataSet.valueColors = [.systemOrange] // 資料標籤顏色
                 dataSet.drawValuesEnabled = true // 是否顯示資料標籤
                 
                 // 設置 LineChartData 並賦值給圖表
                 let lineChartData = LineChartData(dataSet: dataSet)
                 self?.lineChartView.data = lineChartData
-                
                 self?.lineChartView.animate(xAxisDuration: 2.5, yAxisDuration: 2.5, easingOption: .linear)
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupCancelKeyboard() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(cancelKeyboard))
+        tap.cancelsTouchesInView = false // 確保不會影響其他點擊
+        view.addGestureRecognizer(tap)
     }
     
     // MARK: - Selectors
@@ -195,7 +201,20 @@ class CalculateViewController: UIViewController {
     
     //計算數值
     @objc func calculateValue() {
-        viewModel.calculateTotalValue(initialFundValue: initialFund.text ?? "0.0", newInvestmentValue: newInvestment.text ?? "0.0", annualizedRateValue: annualizedRate.text ?? "0.0", investmentYearStepValue: investmentYearStepText.text ?? "1")
+        do {
+            try viewModel.calculateTotalValue(initialFundValue: initialFund.text ?? "0.0", newInvestmentValue: newInvestment.text ?? "0.0", annualizedRateValue: annualizedRate.text ?? "0.0", investmentYearStepValue: investmentYearStepText.text ?? "1")
+            view.endEditing(true)
+        }catch enterStringError.pleaseEnterNumber {
+            let alert = UIAlertController(title: "警告", message: "請重新輸入數字", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "確定", style: .default, handler: nil)
+            alert.addAction(okAction)
+            present(alert, animated: true, completion: nil)
+        } catch {
+            print("Error")
+        }
+    }
+    
+    @objc func cancelKeyboard() {
         view.endEditing(true)
     }
     
