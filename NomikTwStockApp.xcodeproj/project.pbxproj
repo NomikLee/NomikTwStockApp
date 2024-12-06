@@ -44,6 +44,7 @@
 		6F69D45A2CFEED2C003C2D51 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 6F69D4592CFEED2C003C2D51 /* FirebaseRemoteConfig */; };
 		6F69D45C2CFEED2C003C2D51 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 6F69D45B2CFEED2C003C2D51 /* FirebaseStorage */; };
 		6F69D45E2CFEED2C003C2D51 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 6F69D45D2CFEED2C003C2D51 /* FirebaseStorageCombine-Community */; };
+		6F69D46A2D018E59003C2D51 /* NowCandleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F69D4692D018E43003C2D51 /* NowCandleModels.swift */; };
 		6FC8098A2BFA1B5200DE1658 /* MarketDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */; };
 		6FC8098C2BFAD6C100DE1658 /* ListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8098B2BFAD6C100DE1658 /* ListTableViewCell.swift */; };
 		6FC8098E2BFB365100DE1658 /* TwiiHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8098D2BFB365100DE1658 /* TwiiHeaderView.swift */; };
@@ -87,6 +88,7 @@
 		6F69D41B2CFD9C7F003C2D51 /* CalculateModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculateModels.swift; sourceTree = "<group>"; };
 		6F69D41F2CFEDEE7003C2D51 /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		6F69D4302CFEEC1D003C2D51 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		6F69D4692D018E43003C2D51 /* NowCandleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowCandleModels.swift; sourceTree = "<group>"; };
 		6FC809892BFA1B5200DE1658 /* MarketDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketDataModels.swift; sourceTree = "<group>"; };
 		6FC8098B2BFAD6C100DE1658 /* ListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTableViewCell.swift; sourceTree = "<group>"; };
 		6FC8098D2BFB365100DE1658 /* TwiiHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwiiHeaderView.swift; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 		6FD3644A2BF9BA99001CE94E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6F69D4692D018E43003C2D51 /* NowCandleModels.swift */,
 				6F69D41B2CFD9C7F003C2D51 /* CalculateModels.swift */,
 				6F1E9ABA2BFC4B560005E004 /* TwiiModels.swift */,
 				6F69BB752C19766D007D64ED /* TickersModels.swift */,
@@ -367,6 +370,7 @@
 				6FF112662C15802B008F2B27 /* CandleModels.swift in Sources */,
 				6F1E9AC32BFDD56D0005E004 /* StockDataViewModels.swift in Sources */,
 				6FC9F10B2C1454F700DE9413 /* PeDyPbModels.swift in Sources */,
+				6F69D46A2D018E59003C2D51 /* NowCandleModels.swift in Sources */,
 				6FC8098E2BFB365100DE1658 /* TwiiHeaderView.swift in Sources */,
 				6F1E9ABD2BFDC8970005E004 /* MoversUPModels.swift in Sources */,
 				6FC8098A2BFA1B5200DE1658 /* MarketDataModels.swift in Sources */,

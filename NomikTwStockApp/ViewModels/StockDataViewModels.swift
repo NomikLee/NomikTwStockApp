@@ -84,6 +84,18 @@ class StockDataViewModels: ObservableObject {
         }
     }
     
+    // 獲取當前k棒數據
+    func GetNowCandle(symbolCode: String, timeframe: String, completion: @escaping((Result<NowCandleRespose, Error>) -> Void)) {
+        APIServiceManager.shared.nowCandleCall(symbolCode: symbolCode, timeframe: timeframe) { [weak self] result in
+            switch result {
+            case .success(let nowCandleDatas):
+                completion(.success(nowCandleDatas))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
     //獲取搜尋欄數據
     func GetTickers(completion: @escaping((Result<TickersResponse, Error>) -> Void)) {
         APIServiceManager.shared.tickersCall { [weak self] result in

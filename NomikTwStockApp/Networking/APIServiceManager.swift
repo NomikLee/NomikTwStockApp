@@ -13,9 +13,7 @@ class APIServiceManager {
     
     // TWII API 請求
     func twiiCall(completion: @escaping ((Result<TwiiRespose, Error>) -> Void)) {
-        
-        let urlNum = Http.Endpoints.candles("IX0001")
-        let url = URL(string: Constants.baseURL + urlNum.valueEndpoints())
+        let url = URL(string: Constants.baseURL + Http.Endpoints.candles("IX0001").valueEndpoints())
         
         var request = URLRequest(url: url!)
         request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
@@ -38,11 +36,11 @@ class APIServiceManager {
     func moversUpCall(completion: @escaping ((Result<MoversUPRespose, Error>) -> Void)) {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.movers.valueEndpoints())
         
-        let queryItem = [
+        let queryItems = [
             URLQueryItem(name: "direction", value: "up"),
             URLQueryItem(name: "change", value: "value")
         ]
-        urlComponents?.queryItems = queryItem
+        urlComponents?.queryItems = queryItems
         
         guard let url = urlComponents?.url else { return }
         
@@ -65,11 +63,11 @@ class APIServiceManager {
     func moversDownCall(completion: @escaping ((Result<MoversDownRespose, Error>) -> Void)) {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.movers.valueEndpoints())
         
-        let queryItem = [
+        let queryItems = [
             URLQueryItem(name: "direction", value: "down"),
             URLQueryItem(name: "change", value: "value")
         ]
-        urlComponents?.queryItems = queryItem
+        urlComponents?.queryItems = queryItems
         
         guard let urlComponents = urlComponents?.url else { return }
         
@@ -93,10 +91,10 @@ class APIServiceManager {
     func volumesCall(completion: @escaping ((Result<VolumesRespose, Error>) -> Void)) {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.actives.valueEndpoints())
         
-        let queryItem = [
+        let queryItems = [
             URLQueryItem(name: "trade", value: "volume")
         ]
-        urlComponents?.queryItems = queryItem
+        urlComponents?.queryItems = queryItems
         guard let urlComponents = urlComponents?.url else { return }
         
         var request = URLRequest(url: urlComponents)
@@ -178,17 +176,17 @@ class APIServiceManager {
         tast.resume()
     }
     
-    // k棒 API 請求
+    // 歷史k棒 API 請求
     func candleCall(symbolCode: String, timeframe: String, completion: @escaping((Result<CandleRespose, Error>) -> Void)) {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.hcandles(symbolCode).valueEndpoints())
         
-        let queryItem = [
+        let queryItems = [
             URLQueryItem(name: "timeframe", value: timeframe),
             URLQueryItem(name: "fields", value: "open,high,low,close,volume"),
-            URLQueryItem(name: "from", value: "2024-03-01")
+            URLQueryItem(name: "from", value: "2024-01-01")
         ]
         
-        urlComponents?.queryItems = queryItem
+        urlComponents?.queryItems = queryItems
         
         guard let urlComponents = urlComponents?.url else { return }
         
@@ -207,16 +205,43 @@ class APIServiceManager {
         tast.resume()
     }
     
+    // 當前k棒 API 請求
+    func nowCandleCall(symbolCode: String, timeframe: String, completion: @escaping((Result<NowCandleRespose, Error>) -> Void)) {
+        var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.candles(symbolCode).valueEndpoints())
+        
+        let queryItems = [
+            URLQueryItem(name: "timeframe", value: timeframe)
+        ]
+        
+        urlComponents?.queryItems = queryItems
+        guard let url = urlComponents?.url else { return }
+        
+        var request = URLRequest(url: url)
+        request.setValue(Constants.apiKey, forHTTPHeaderField: Http.Headers.apiKey.rawValue)
+        
+        let tast = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let nowCandleDatas = try JSONDecoder().decode(NowCandleRespose.self, from: data)
+                completion(.success(nowCandleDatas))
+            }catch {
+                completion(.failure(error))
+            }
+        }
+        tast.resume()
+    }
+    
     // 搜尋欄 API 請求
     func tickersCall(completion: @escaping((Result<TickersResponse, Error>) -> Void)) {
         var urlComponents = URLComponents(string: Constants.baseURL + Http.Endpoints.tickers.valueEndpoints())
         
-        let queryItem = [
+        let queryItems = [
             URLQueryItem(name: "type", value: "EQUITY"),
             URLQueryItem(name: "exchange", value: "TWSE")
         ]
         
-        urlComponents?.queryItems = queryItem
+        urlComponents?.queryItems = queryItems
         
         guard let urlComponents = urlComponents?.url else { return }
         
