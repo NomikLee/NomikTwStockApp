@@ -13,7 +13,6 @@ class HomeViewController: UIViewController {
     private var viewModel = StockDataViewModels()
     
     // MARK: - Variables
-    private var timer: Timer?
     private var tapMoversUP: Bool = false
     private var tapMoversDown: Bool = false
     private var tapVolume: Bool = false
@@ -42,8 +41,8 @@ class HomeViewController: UIViewController {
         twiiHeaderView.delegate = self
         homeTableView.tableHeaderView = twiiHeaderView
         
-        reloadViewData()
-        startTimer()
+        loadViewData()
+        bindView()
     }
     
     override func viewDidLayoutSubviews() {
@@ -52,28 +51,31 @@ class HomeViewController: UIViewController {
     }
     
     // MARK: - Functions
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
-            self?.reloadViewData()
+    private func loadViewData() {
+        viewModel.GetMoversUp()
+        viewModel.GetMoversDown()
+        viewModel.GetVolumes()
+        
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: { [weak self] _ in
+            self?.viewModel.GetMoversUp()
+            self?.viewModel.GetMoversDown()
+            self?.viewModel.GetVolumes()
         })
     }
     
-    private func reloadViewData() {
-        viewModel.GetMoversUp()
+    private func bindView() {
         viewModel.$moversUPData.receive(on: DispatchQueue.main)
             .sink { _ in
                 self.homeTableView.reloadData()
             }
             .store(in: &cancellables)
         
-        viewModel.GetMoversDown()
         viewModel.$moversDOWNData.receive(on: DispatchQueue.main)
             .sink { _ in
                 self.homeTableView.reloadData()
             }
             .store(in: &cancellables)
         
-        viewModel.GetVolumes()
         viewModel.$volumesData.receive(on: DispatchQueue.main)
             .sink { _ in
                 self.homeTableView.reloadData()
@@ -88,21 +90,30 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource, TwiiHe
         tapMoversUP = true
         tapMoversDown = false
         tapVolume = false
-        self.homeTableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.homeTableView.reloadData()
+        }
     }
 
     func twiiHeaderViewDidTapMoversDown() {
         tapMoversUP = false
         tapMoversDown = true
         tapVolume = false
-        self.homeTableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.homeTableView.reloadData()
+        }
     }
 
     func twiiHeaderViewDidTapVolume() {
         tapMoversUP = false
         tapMoversDown = false
         tapVolume = true
-        self.homeTableView.reloadData()
+        
+        DispatchQueue.main.async {
+            self.homeTableView.reloadData()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

@@ -33,9 +33,9 @@ class MainTabbarController: UITabBarController {
         vc2.tabBarItem.image = UIImage(systemName: "heart")
         vc3.tabBarItem.image = UIImage(systemName: "square.grid.3x3.middle.filled")
         
-        vc1.tabBarItem.title = "主頁"
-        vc2.tabBarItem.title = "自選股"
-        vc3.tabBarItem.title = "複利計算機"
+        vc1.tabBarItem.title = ""
+        vc2.tabBarItem.title = ""
+        vc3.tabBarItem.title = ""
         
         tabBar.tintColor = .systemOrange
         

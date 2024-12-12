@@ -6,9 +6,9 @@
 //
 
 import UIKit
+import Combine
 import DGCharts
 import FirebaseFirestore
-import Combine
 
 private enum SectionTabs: String {
     case candle5K = "5K"

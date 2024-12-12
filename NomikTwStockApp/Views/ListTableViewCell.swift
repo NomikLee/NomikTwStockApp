@@ -11,7 +11,7 @@ import Combine
 class ListTableViewCell: UITableViewCell {
     
     static let identifier = "ListTableViewCell"
-    private var viewModel = StockUpDownViewModels()
+    private let viewModel = StockUpDownViewModels()
     
     // MARK: - Variables
     private let padding: CGFloat = 10.0
@@ -76,6 +76,15 @@ class ListTableViewCell: UITableViewCell {
         contentView.addSubview(stockChangePercentLabel)
         
         configureUI()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        symbolLabel.text = ""
+        nameLabel.text = ""
+        stockStatusLabel.text = ""
+        stockPriceLabel.text = ""
+        stockChangePercentLabel.text = ""
     }
 
     required init?(coder: NSCoder) {
@@ -149,5 +158,3 @@ class ListTableViewCell: UITableViewCell {
         ])
     }
 }
-
-// MARK: - Extension

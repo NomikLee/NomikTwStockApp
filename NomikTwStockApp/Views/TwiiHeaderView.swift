@@ -52,16 +52,8 @@ class TwiiHeaderView: UIView {
     }
     
     // MARK: - UI Components
-    private let viewBar: UIView = {
-        let viewBar = UIView()
-        viewBar.translatesAutoresizingMaskIntoConstraints = false
-        viewBar.backgroundColor = .systemOrange
-        return viewBar
-    }()
-    
-    private let tabButtons: [UIButton] = ["台股上漲排行", "台股下跌排行", "成交量排行"].map{ titles in
+    private let tabButtons: [UIButton] = [SectionTabs.moversUP.rawValue, SectionTabs.moversDown.rawValue, SectionTabs.volume.rawValue].map{ titles in
         let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(titles, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         button.tintColor = .label
@@ -75,6 +67,13 @@ class TwiiHeaderView: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         return stackView
+    }()
+    
+    private let viewBar: UIView = {
+        let viewBar = UIView()
+        viewBar.translatesAutoresizingMaskIntoConstraints = false
+        viewBar.backgroundColor = .systemOrange
+        return viewBar
     }()
 
     private var lineChart: LineChartView = {
@@ -141,15 +140,17 @@ class TwiiHeaderView: UIView {
     private func setData() {
         var entrieData: [ChartDataEntry] = []
         
-        APIServiceManager.shared.twiiCall { result in
+        APIServiceManager.shared.twiiCall { [weak self] result in
             switch result {
             case .success(let twiiDataCall):
-                let centerValue: Double = twiiDataCall.data.first?.open ?? 0.0
                 
-                let limitLine = ChartLimitLine(limit: centerValue, label: "開盤價\(centerValue)")
+                //設定開盤價的線
+                let openValue: Double = twiiDataCall.data.first?.open ?? 0.0
+                let limitLine = ChartLimitLine(limit: openValue, label: "開盤價\(openValue)")
                 limitLine.lineWidth = 1
                 limitLine.lineColor = .systemYellow
                 
+                //設定大盤的數值
                 for i in 0..<twiiDataCall.data.count {
                     if i == 0 {
                         entrieData.append(ChartDataEntry(x: Double(i), y: Double(twiiDataCall.data[i].open)))
@@ -179,12 +180,10 @@ class TwiiHeaderView: UIView {
                         set1.drawFilledEnabled = false
                     }
                     
-                    self.lineChart.rightAxis.addLimitLine(limitLine)
-            
                     let data = LineChartData(dataSet: set1)
-                    data.setDrawValues(false)
-                    self.lineChart.data = data
-                    self.lineChart.notifyDataSetChanged()
+                    self?.lineChart.data = data
+                    self?.lineChart.rightAxis.addLimitLine(limitLine)
+                    self?.lineChart.notifyDataSetChanged()
                 }
             case .failure(let error):
                 print(error.localizedDescription)

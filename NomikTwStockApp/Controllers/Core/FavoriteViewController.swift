@@ -12,12 +12,16 @@ class FavoriteViewController: UIViewController {
     private var viewModel = StockDataViewModels()
     
     // MARK: - Variables
-    private let searchVC = UISearchController(searchResultsController: SearchViewController())
-    private let dataBase = Firestore.firestore()
-    private lazy var doc = dataBase.document("Favorite/TwStocks")
     private var favoriteCode: [String] = []
+    private lazy var doc = Firestore.firestore().document("Favorite/TwStocks")
+    private let searchVC = UISearchController(searchResultsController: SearchViewController())
     
     // MARK: - UI Components
+    private let refresh: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        return refresh
+    }()
+    
     private let favoriteCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -36,6 +40,9 @@ class FavoriteViewController: UIViewController {
         
         favoriteCollectionView.delegate = self
         favoriteCollectionView.dataSource = self
+        
+        favoriteCollectionView.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         
         createSearchBar()
     }
@@ -70,6 +77,16 @@ class FavoriteViewController: UIViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
         searchVC.searchBar.delegate = self
         searchVC.searchResultsUpdater = self
+    }
+    
+    // MARK: - Selectors
+    @objc private func refreshData() { //下拉更新自選股選單
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            self?.readData { [weak self] _ in
+                self?.favoriteCollectionView.reloadData()
+            }
+            self?.refresh.endRefreshing()
+        }
     }
 }
 
@@ -119,9 +136,7 @@ extension FavoriteViewController: UICollectionViewDelegateFlowLayout {
 
 extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        guard let searchBarText = searchController.searchBar.text, let resultsController = searchController.searchResultsController as? SearchViewController else {
-            return
-        }
+        guard let searchBarText = searchController.searchBar.text, let resultsController = searchController.searchResultsController as? SearchViewController else { return }
         
         viewModel.GetTickers { [weak self] result in
             switch result {

@@ -8,7 +8,7 @@
 import Foundation
 
 struct Constants {
-    static let apiKey = "MzNkMmMyNTctNzMwNy00NzcxLWFiYjktYmVjNzNkMWRiNjMzIDZiNzhiZGM4LWE0YTQtNDgyMi1iYTcyLTYzNjBjZGU5NDgzNA=="
+    static let apiKey = ""
     static let baseURL = "https://api.fugle.tw/marketdata/v1.0/stock"
 }
 
