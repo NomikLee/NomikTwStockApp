@@ -19,6 +19,7 @@ class FavoriteViewController: UIViewController {
     // MARK: - UI Components
     private let refresh: UIRefreshControl = {
         let refresh = UIRefreshControl()
+        refresh.tintColor = .systemOrange
         return refresh
     }()
     
