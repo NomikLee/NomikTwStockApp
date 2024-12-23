@@ -65,20 +65,20 @@ class HomeViewController: UIViewController {
     
     private func bindView() {
         viewModel.$moversUPData.receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.homeTableView.reloadData()
+            .sink { [weak self] _ in
+                self?.homeTableView.reloadData()
             }
             .store(in: &cancellables)
         
         viewModel.$moversDOWNData.receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.homeTableView.reloadData()
+            .sink { [weak self] _ in
+                self?.homeTableView.reloadData()
             }
             .store(in: &cancellables)
         
         viewModel.$volumesData.receive(on: DispatchQueue.main)
-            .sink { _ in
-                self.homeTableView.reloadData()
+            .sink { [weak self] _ in
+                self?.homeTableView.reloadData()
             }
             .store(in: &cancellables)
     }

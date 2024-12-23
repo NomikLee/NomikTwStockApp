@@ -63,7 +63,7 @@ class FavoriteViewController: UIViewController {
     // MARK: - Functions
     private func readData(completion: @escaping ([String]) -> Void){
         doc.getDocument { snapshot, error in
-            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) }
+            guard let data = snapshot?.data(), error == nil else { return self.doc.setData([:]) } //如果沒有會在Favorite/TwStocks下創建[:]
             
             DispatchQueue.main.async {
                 let keysCollection: Dictionary<String, Any>.Keys = data.keys
@@ -75,7 +75,7 @@ class FavoriteViewController: UIViewController {
     
     private func createSearchBar() {
         navigationItem.searchController = searchVC
-        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.hidesSearchBarWhenScrolling = false //搜尋欄常開
         searchVC.searchBar.delegate = self
         searchVC.searchResultsUpdater = self
     }
@@ -156,6 +156,4 @@ extension FavoriteViewController: UISearchBarDelegate, UISearchResultsUpdating {
             }
         }
     }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {}
 }

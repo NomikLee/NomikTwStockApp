@@ -6,9 +6,8 @@
 //
 
 import UIKit
-import Combine
 import DGCharts
-import FirebaseFirestore
+import Firebase
 
 private enum SectionTabs: String {
     case candle5K = "5K"
@@ -27,8 +26,7 @@ class DetailViewController: UIViewController {
     private var padding: CGFloat = 10.0
     private var checkFavoriteCode: [String] = []
     private var candleValue: [CandleRespose] = []
-    private let dataBase = Firestore.firestore()
-    private lazy var doc = dataBase.document("Favorite/TwStocks")
+    private lazy var doc = Firestore.firestore().document("Favorite/TwStocks")
     
     private var sectionTab: Int = 3 {
         didSet {
@@ -316,15 +314,12 @@ class DetailViewController: UIViewController {
     }
     
     // MARK: - Functions
-    private func checkFavorite(completion: @escaping([String]) -> Void) {
+    private func checkFavorite(completion: @escaping([String]) -> Void) { //取得自選股列表
         doc.getDocument { snapshot, error in
             guard let data = snapshot?.data(), error == nil else { return }
-            
-            DispatchQueue.main.async {
-                let keysCollection: Dictionary<String, Any>.Keys = data.keys
-                self.checkFavoriteCode = Array(keysCollection)
-                completion(self.checkFavoriteCode)
-            }
+            let keysCollection: Dictionary<String, Any>.Keys = data.keys
+            self.checkFavoriteCode = Array(keysCollection)
+            completion(self.checkFavoriteCode)
         }
     }
     
@@ -416,8 +411,8 @@ class DetailViewController: UIViewController {
                     self?.candleStickChartView.xAxis.axisMaximum = Double(yCandleValues.count) + 1.0
                     self?.candleStickChartView.notifyDataSetChanged()
                 }
-            case .failure(let failure):
-                print(failure.localizedDescription)
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }
@@ -468,14 +463,14 @@ class DetailViewController: UIViewController {
     }
     
     @objc private func addFavoriteTap(){
-        doc.updateData([self.title : detailName.text ?? ""])
+        doc.updateData([self.title : detailName.text ?? ""]) //更新自選股列表
         
         favoritePushButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
         favoritePushButton.addTarget(self, action: #selector(self.subFavoriteTap), for: .touchUpInside)
     }
     
     @objc private func subFavoriteTap() {
-        doc.updateData([self.title : FieldValue.delete()])
+        doc.updateData([self.title : FieldValue.delete()]) //刪除自選股列表
         
         favoritePushButton.setImage(UIImage(systemName: "heart"), for: .normal)
         favoritePushButton.addTarget(self, action: #selector(self.addFavoriteTap), for: .touchUpInside)

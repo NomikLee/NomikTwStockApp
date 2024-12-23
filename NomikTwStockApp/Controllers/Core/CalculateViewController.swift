@@ -139,6 +139,7 @@ class CalculateViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
         view.addSubview(initialFundTitle)
         view.addSubview(initialFund)

@@ -23,11 +23,6 @@ class MainTabbarController: UITabBarController {
         let vc1 = UINavigationController(rootViewController: homeVC)
         let vc2 = UINavigationController(rootViewController: favoriteVC)
         let vc3 = UINavigationController(rootViewController: calculateVC)
-        
-        // 設置大標題
-        vc1.navigationBar.prefersLargeTitles = true
-        vc2.navigationBar.prefersLargeTitles = true
-        vc3.navigationBar.prefersLargeTitles = true
 
         vc1.tabBarItem.image = UIImage(systemName: "house")
         vc2.tabBarItem.image = UIImage(systemName: "heart")
