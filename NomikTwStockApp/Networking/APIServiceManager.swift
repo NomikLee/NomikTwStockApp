@@ -11,6 +11,8 @@ class APIServiceManager {
     
     static let shared = APIServiceManager()
     
+    private init() {}
+    
     // TWII API 請求
     func twiiCall(completion: @escaping ((Result<TwiiRespose, Error>) -> Void)) {
         let url = URL(string: Constants.baseURL + Http.Endpoints.candles("IX0001").valueEndpoints())
@@ -183,7 +185,7 @@ class APIServiceManager {
         let queryItems = [
             URLQueryItem(name: "timeframe", value: timeframe),
             URLQueryItem(name: "fields", value: "open,high,low,close,volume"),
-            URLQueryItem(name: "from", value: "2024-01-01")
+            URLQueryItem(name: "from", value: "2024-09-01")
         ]
         
         urlComponents?.queryItems = queryItems

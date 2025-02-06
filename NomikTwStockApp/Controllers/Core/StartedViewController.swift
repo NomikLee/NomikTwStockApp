@@ -71,7 +71,7 @@ class StartedViewController: UIViewController {
         enterButton.layer.insertSublayer(gradientLayer, at: 0)
     }
 
-    func setMarquee() {
+    private func setMarquee() {
         timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateMarquee), userInfo: nil, repeats: true)
     }
     

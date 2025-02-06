@@ -163,6 +163,7 @@ class TwiiHeaderView: UIView {
                     let set1 = LineChartDataSet(entries: entrieData, label: "大盤加權指數")
                     set1.mode = .cubicBezier
                     set1.drawCirclesEnabled = false
+                    set1.drawValuesEnabled = false
                     
                     if twiiDataCall.data.last?.close ?? 0.0 > twiiDataCall.data.first?.open ?? 0.0 {
                         set1.setColor(.red)
