@@ -63,6 +63,7 @@ class HomeViewController: UIViewController {
         })
     }
     
+    //binding畫面
     private func bindView() {
         viewModel.$moversUPData.receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
